@@ -14,8 +14,8 @@ pip install -r requirements.txt
 ```
 
 ## Run the server
-Navigate to MaRQ-Web folder and execute:
 
+execute:
 ```bash
 python manage.py runserver
 ```
