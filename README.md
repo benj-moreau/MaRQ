@@ -1,2 +1,2 @@
 # MaRQ
-MaRQ generates federated SPARQL queries FROM RDF mappings
+MaRQ generates federated SPARQL queries from RDF mappings
