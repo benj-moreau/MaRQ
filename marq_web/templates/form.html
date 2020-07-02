@@ -33,10 +33,10 @@
         <form class="was-validated" action="/result" method="post">
 
             <div class="container">
-                <div class="row">
+                <div class="row mt-5 ml-5">
 
                     <!-- your mapping -->
-                    <div class="col-sm-3">
+                    <div class="col-sm-5">
                         <div class="custom-file">
                             <label class="custom-file-label" for="yourmapping">Your mapping</label>
                             <input type="file" class="custom-file-input" id="yourmapping">
@@ -44,7 +44,7 @@
                     </div>
 
                     <!-- mapping to compare to -->
-                    <div class="col-sm-3">
+                    <div class="col-sm-3 ml-5">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="checkexemple1">
                             <label class="form-check-label" for="checkexemple1">exemple1.yml</label>
@@ -57,7 +57,7 @@
                             <input class="form-check-input" type="checkbox" value="" id="checkexemple3">
                             <label class="form-check-label" for="checkexemple3">exemple3.yml</label>
                         </div>
-                        <div class="custom-file">
+                        <div class="custom-file mt-sm-5">
                             <label class="custom-file-label" for="addmapping">Add mapping</label>
                             <input type="file" class="custom-file-input" id="addmapping">
                         </div>
@@ -66,7 +66,9 @@
             </div>
 
             <!-- evaluate -->
-            <button type="submit" class="btn btn-lg btn-outline-primary">Evaluate <i class="fas fa-vial"></i></button>
+            <div class="mx-auto mt-5" style="width: 270px">
+                <button type="submit" class="btn btn-lg btn-outline-primary">Evaluate <i class="fas fa-vial"></i></button>
+            </div>
 
         </form>
     </section>
