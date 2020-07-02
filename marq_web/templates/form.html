@@ -31,10 +31,43 @@
 
     <section class="page-section portfolio">
         <form class="was-validated" action="/result" method="post">
+
             <div class="container">
-                LE FORMULAIRE ICI
+                <div class="form-group row">
+
+                    <!-- your mapping -->
+                    <div class="col">
+                        <div class="custom-file">
+                            <label class="custom-file-label" for="yourmapping">Your mapping</label>
+                            <input type="file" class="custom-file-input" id="yourmapping">
+                        </div>
+                    </div>
+
+                    <!-- mapping to compare to -->
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="checkexemple1">
+                            <label class="form-check-label" for="checkexemple1">exemple1.yml</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="checkexemple2">
+                            <label class="form-check-label" for="checkexemple2">exemple2.yml</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="checkexemple3">
+                            <label class="form-check-label" for="checkexemple3">exemple3.yml</label>
+                        </div>
+                        <div class="custom-file">
+                            <label class="custom-file-label" for="addmapping">Add mapping</label>
+                            <input type="file" class="custom-file-input" id="addmapping">
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- evaluate -->
             <button type="submit" class="btn btn-lg btn-outline-primary">Evaluate <i class="fas fa-vial"></i></button>
+
         </form>
     </section>
 
