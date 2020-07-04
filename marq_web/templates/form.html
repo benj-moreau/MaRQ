@@ -31,6 +31,7 @@
 
     <section class="page-section portfolio">
         <form class="was-validated" action="/result" method="post">
+            {% verbatim %}
 
             <div class="container">
                 <div class="row mt-5 ml-5">
@@ -38,42 +39,26 @@
                     <!-- your mapping -->
                     <div class="col-sm-5">
                         <div class="custom-file">
-                            <label class="custom-file-label" for="yourmapping">Your mapping</label>
-                            <input type="file" class="custom-file-input" id="yourmapping">
+                            <label class="custom-file-label" for="yourmapping">{{ yourMapping.name }}</label>
+                            <input type="file" class="custom-file-input" id="yourmapping" @change="processFile($event)">
                         </div>
                     </div>
 
                     <!-- mapping to compare to -->
-                    <!--div class="col-sm-3 ml-5">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="checkexemple1">
-                            <label class="form-check-label" for="checkexemple1">exemple1.yml</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="checkexemple2">
-                            <label class="form-check-label" for="checkexemple2">exemple2.yml</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="checkexemple3">
-                            <label class="form-check-label" for="checkexemple3">exemple3.yml</label>
-                        </div>
-                        <div class="custom-file mt-sm-5">
+                    <div class="col-sm-3 ml-5">
+                        <ul>
+                            <li v-for="mapping in mappings">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" :value="mapping" :id="mapping.name" v-model="checkedMappings">
+                                    <label class="form-check-label" :for="mapping.name">{{ mapping.name }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="custom-file">
                             <label class="custom-file-label" for="addmapping">Add mapping</label>
-                            <input type="file" class="custom-file-input" id="addmapping" name="myFile">
+                            <input type="file" class="custom-file-input" id="addmapping" name="myFile" @change="addFile($event)">
                         </div>
-                    </div-->
-
-                    <ul>
-                        {% verbatim %}
-                        <li v-for="mapping in mappings">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check-mapping">
-                                <label class="form-check-label" for="check-mapping">{{ mapping.name }}</label>
-                            </div>
-                        </li>
-                        {% endverbatim %}
-                    </ul>
-
+                    </div>
                 </div>
             </div>
 
@@ -82,6 +67,7 @@
                 <button type="submit" class="btn btn-lg btn-outline-primary">Evaluate <i class="fas fa-vial"></i></button>
             </div>
 
+            {% endverbatim %}
         </form>
     </section>
 
