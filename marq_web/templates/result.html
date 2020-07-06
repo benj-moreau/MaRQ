@@ -32,7 +32,7 @@
     <div class="container" id="result">
         {% verbatim %}
         <div class="form-row">
-            <div class="col-hg-4 mt-5 ">
+            <div class="col-hg-4 ml-5 mt-5 ">
                 <div class="form-group">
                     <label for="mappingranking">Ranking</label>
                     <ol id="mappingranking">
@@ -44,8 +44,17 @@
                     </ol>
                 </div>
             </div>
-            <div class="col-sm-4 mt-5 ">
-                <div>
+            <div class="col-sm-4 ml-5 mt-5 ">
+                <p :hidden="compSelected == 'default'">
+                    Source: {{ compSelected["Source"] }}<br>
+                    Destination: {{ compSelected["Destination"] }}<br>
+                    Score: {{ compSelected["Score"] }}<br>
+                    <br>
+                    Nombre de tripple pattern:<br>
+                    {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern"] }}<br>
+                </p>
+
+                <div :hidden="compSelected == 'default'">>
                     {{ compSelected }}
                 </div>
             </div>
