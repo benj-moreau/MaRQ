@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="MaRQ generates federated SPARQL queries from RDF mappings">
     <meta name="author" content="Benjamin MOREAU">
-    <title>EvaMap</title>
+    <title>MaRQ</title>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -28,19 +28,25 @@
             <div class="navbar-brand js-scroll-trigger">MaRQ: Generating Federated Queries from RDF mappings</div>
         </div>
     </nav>
-
-    <section class="page-section portfolio" id="portfolio">
-        <div class="container" id="result">
-            <div class="col-sm-4 mt-5 ml-5">
-                <ol>
-                   <li v-for="mapping in ranking">
-                       {{ mapping.name }}
-                   </li>
-                </ol>
+<section class="page-section portfolio" id="portfolio">
+    <div class="container" id="result">
+        {% verbatim %}
+        <div class="col-sm-4 mt-5 ml-5">
+            <div class="form-group">
+                <label for="mappingranking">Ranking</label>
+                <select multiple class="form-control form-control-lg" id="mappingranking">
+                    <option>exemple1.yml</option>
+                    <option>exemple2.yml</option>
+                    <option>exemple3.yml</option>
+                </select>
+                <div>
+                    {{ marq_result }}
+                </div>
             </div>
         </div>
-    </section>
-
+        {% endverbatim %}
+    </div>
+</section>
     <!-- Copyright Section -->
     <section class="copyright py-2 text-center text-white fixed-bottom">
         <div class="container">
