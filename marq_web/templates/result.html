@@ -44,19 +44,27 @@
                     </ol>
                 </div>
             </div>
-            <div class="col-sm-4 ml-5 mt-5 ">
-                <p :hidden="compSelected == 'default'">
+            <div class="col-md-4 ml-5 mt-5 ">
+                <p v-if="compSelected != 'default'">
                     Source: {{ compSelected["Source"] }}<br>
                     Destination: {{ compSelected["Destination"] }}<br>
                     Score: {{ compSelected["Score"] }}<br>
                     <br>
-                    Nombre de tripple pattern:<br>
-                    {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern"] }}<br>
+                    Subject Subject:<br>
+                    Nombre de tripple pattern: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern"] }}<br>
+                    From M1: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M1"] }}<br>
+                    From M2: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M2"] }}<br>
+                    <br>
+                    Object Object:<br>
+                    Nombre de tripple pattern: {{ compSelected["Join_object_object"]["Number_of_triple_pattern"] }}<br>
+                    From M1: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M1"] }}<br>
+                    From M2: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M2"] }}<br>
+                    <br>
+                    Subject Object:<br>
+                    Nombre de tripple pattern: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern"] }}<br>
+                    From M1: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M1"] }}<br>
+                    From M2: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M2"] }}<br>
                 </p>
-
-                <div :hidden="compSelected == 'default'">>
-                    {{ compSelected }}
-                </div>
             </div>
         </div>
         {% endverbatim %}
