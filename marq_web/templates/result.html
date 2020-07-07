@@ -22,54 +22,56 @@
 </head>
 
 <body>
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
-    <div class="container">
-        <div class="navbar-brand js-scroll-trigger">MaRQ: Generating Federated Queries from RDF mappings</div>
-    </div>
-</nav>
-<section class="page-section portfolio" id="portfolio">
-    <div class="container" id="result">
-        {% verbatim %}
-        <div class="form-row">
-            <div class="col-hg-4 ml-5 mt-5 ">
-                <div class="form-group">
-                    <label for="mappingranking">Ranking</label>
-                    <ol id="mappingranking">
-                        <li v-for="comparaison in marq_result['comparaisons']">
-                            <button v-on:click="compSelected = comparaison">
-                                {{ comparaison["Source"] }} vers {{ comparaison["Destination"] }}
-                            </button>
-                        </li>
-                    </ol>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+        <div class="container">
+            <div class="navbar-brand js-scroll-trigger">MaRQ: Generating Federated Queries from RDF mappings</div>
+        </div>
+    </nav>
+    <section class="page-section portfolio" id="portfolio">
+        <div class="container" id="result">
+            {% verbatim %}
+            <div class="form-row">
+                <div class="col-hg-4 ml-5 mt-5 ">
+                    <div class="form-group">
+                        <label for="mappingranking">Ranking</label>
+                        <ol id="mappingranking">
+                            <li v-for="comparaison in ordered_results">
+                                <button v-on:click="compSelected = comparaison">
+                                    {{ comparaison["Source"] }} vers {{ comparaison["Destination"] }}
+                                </button>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="col-md-4 ml-5 mt-5 ">
+                    <p v-if="compSelected != 'default'">
+                        Source: {{ compSelected["Source"] }}<br>
+                        Destination: {{ compSelected["Destination"] }}<br>
+                        Score: {{ compSelected["Score"] }}<br>
+                        <br>
+                        Subject Subject:<br>
+                        Nombre de tripple pattern: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern"] }}<br>
+                        From M1: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M1"] }}<br>
+                        From M2: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M2"] }}<br>
+                        <br>
+                        Object Object:<br>
+                        Nombre de tripple pattern: {{ compSelected["Join_object_object"]["Number_of_triple_pattern"] }}<br>
+                        From M1: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M1"] }}<br>
+                        From M2: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M2"] }}<br>
+                        <br>
+                        Subject Object:<br>
+                        Nombre de tripple pattern: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern"] }}<br>
+                        From M1: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M1"] }}<br>
+                        From M2: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M2"] }}
+                    </p>
+
                 </div>
             </div>
-            <div class="col-md-4 ml-5 mt-5 ">
-                <p v-if="compSelected != 'default'">
-                    Source: {{ compSelected["Source"] }}<br>
-                    Destination: {{ compSelected["Destination"] }}<br>
-                    Score: {{ compSelected["Score"] }}<br>
-                    <br>
-                    Subject Subject:<br>
-                    Nombre de tripple pattern: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern"] }}<br>
-                    From M1: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M1"] }}<br>
-                    From M2: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M2"] }}<br>
-                    <br>
-                    Object Object:<br>
-                    Nombre de tripple pattern: {{ compSelected["Join_object_object"]["Number_of_triple_pattern"] }}<br>
-                    From M1: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M1"] }}<br>
-                    From M2: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M2"] }}<br>
-                    <br>
-                    Subject Object:<br>
-                    Nombre de tripple pattern: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern"] }}<br>
-                    From M1: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M1"] }}<br>
-                    From M2: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M2"] }}<br>
-                </p>
-            </div>
+            {% endverbatim %}
         </div>
-        {% endverbatim %}
-    </div>
-</section>
+    </section>
+
     <!-- Copyright Section -->
     <section class="copyright py-2 text-center text-white fixed-bottom">
         <div class="container">
