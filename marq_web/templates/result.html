@@ -34,39 +34,31 @@
             <div class="form-row">
                 <div class="col-hg-4 ml-5 mt-5 ">
                     <div class="form-group">
-                        <label for="mappingranking">Ranking</label>
-                        <ol id="mappingranking">
-                            <li v-for="comparaison in ordered_results">
-                                <button v-on:click="compSelected = comparaison">
-                                    {{ comparaison["Source"] }} vers {{ comparaison["Destination"] }}
+                        <label for="mapping1">Source</label>
+                        <ul id="mapping1">
+                            <li v-for="mapping in mapping_list">
+                                <button type="button" class="btn btn-primary mb-1" v-on:click="clickSource(mapping)">
+                                    {{ mapping }}
                                 </button>
                             </li>
-                        </ol>
+                        </ul>
                     </div>
                 </div>
-                <div class="col-md-4 ml-5 mt-5 ">
-                    <p v-if="compSelected != 'default'">
-                        Source: {{ compSelected["Source"] }}<br>
-                        Destination: {{ compSelected["Destination"] }}<br>
-                        Score: {{ compSelected["Score"] }}<br>
-                        <br>
-                        Subject Subject:<br>
-                        Nombre de tripple pattern: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern"] }}<br>
-                        From M1: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M1"] }}<br>
-                        From M2: {{ compSelected["Join_subject_subject"]["Number_of_triple_pattern_from_M2"] }}<br>
-                        <br>
-                        Object Object:<br>
-                        Nombre de tripple pattern: {{ compSelected["Join_object_object"]["Number_of_triple_pattern"] }}<br>
-                        From M1: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M1"] }}<br>
-                        From M2: {{ compSelected["Join_object_object"]["Number_of_triple_pattern_from_M2"] }}<br>
-                        <br>
-                        Subject Object:<br>
-                        Nombre de tripple pattern: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern"] }}<br>
-                        From M1: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M1"] }}<br>
-                        From M2: {{ compSelected["Join_subject_object"]["Number_of_triple_pattern_from_M2"] }}
-                    </p>
-
+                <div class="col-hg-4 ml-5 mt-5 ">
+                    <div class="form-group">
+                        <label for="mapping2">Destination</label>
+                        <ul id="mapping2">
+                            <li v-for="mapping in mapping_list">
+                                <button type="button" class="btn btn-primary mb-1" v-on:click="clickDestination(mapping)">
+                                    {{ mapping }}
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            </div>
+            <div class="form-row">
+                {{ comparaisons }}
             </div>
             {% endverbatim %}
         </div>
