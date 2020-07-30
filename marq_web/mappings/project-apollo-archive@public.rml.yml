@@ -1,0 +1,40 @@
+mappings:
+  image:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://xmlns.com/foaf/0.1/Document']
+      - [a, 'http://schema.org/CreativeWork']
+      - [a, 'http://sw-portal.deri.org/ontologies/swportal#Publication']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(photo_title)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(photo_description)]
+      - ['http://purl.org/dc/terms/license', $(photo_license)]
+      - ['http://purl.org/dc/elements/1.1/rights', $(photo_license)]
+      - ['http://purl.org/dc/terms/rights', $(photo_license)]
+      - ['http://www.w3.org/2002/07/owl#topObjectProperty', $(photo_license)]
+      - ['https://schema.org/datePublished', $(photo_date_uploaded), 'http://www.w3.org/2001/XMLSchema#dateTime']
+      - ['https://schema.org/isPartOf', imageGallery]
+    source: dataset-source
+    subject: $(photo_url_o)
+  imageGallery:
+    predicateobjects:
+      - [a, 'https://schema.org/ImageGallery']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(album_name)]
+      - ['https://schema.org/hasPart', image]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/project-apollo-archive@public/ImageGallery/$(album_id)-$(apollo_x)/
+  mission:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/SpaceMission']
+      - [a, 'http://dbpedia.org/ontology/SocietalEvent']
+      - [a, 'http://www.ontotext.com/proton/protonext#SpaceMission']
+      - [a, 'http://www.ontotext.com/proton/protontop#Event']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(apollo_x)]
+      - ['http://dbpedia.org/ontology/launchDate', $(start_date), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['http://dbpedia.org/ontology/landingDate', $(end_date), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['http://schema.org/image', imageGallery]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/project-apollo-archive@public/SpaceMission/$(apollo_x)/
+sources:
+  dataset-source: [project-apollo-archive@public.json~jsonpath, '$.[*].fields']

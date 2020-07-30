@@ -1,0 +1,26 @@
+mappings:
+  Drug:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Drug']
+      - [a, 'http://dbpedia.org/ontology/ChemicalSubstance']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#ChemicalObject']
+      - [a, 'https://schema.org/Drug']
+      - ['https://schema.org/manufacturer', Organization]
+      - ['https://schema.org/administrationRoute', $(voies_d_administration)]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(denomination_du_medicament)]
+      - ['https://schema.org/legalStatus', $(statut_administratif_de_l_autorisation_de_mise_sur_le_marche).
+                                             $(type_de_procedure_d_autorisation_de_mise_sur_le_marche)]
+      - ['https://schema.org/dosageForm', $(forme_pharmaceutique)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', "$(denomination_du_medicament)\
+        \ ($(titulaire)). Autorisation de mise sur le march\xE9:$(date_d_amm)"]
+      - ['http://purl.org/dc/elements/1.1/date', $(date_d_amm), 'http://www.w3.org/2001/XMLSchema#date']
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/cis_bdpm@public/Drug/$(denomination_du_medicament)/
+  Organization:
+    predicateobjects:
+      - [a, 'https://schema.org/Organization']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(titulaire)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/cis_bdpm@public/Organization/$(titulaire)/
+sources:
+  dataset-source: [cis_bdpm@public.json~jsonpath, '$.records.[*].fields']

@@ -1,0 +1,66 @@
+mappings:
+  EspacedeCoworking:
+    predicateobjects:
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a,'https://www.data.gov//def/fea#Office']
+      - [a,'https://w3id.org/seas/OfficeBuilding']
+      - [a,'https://w3id.org/seas/Office']
+      - [a,'https://w3id.org/seas/NonResidentalBuilding']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom)]
+      - ['https://schema.org/location', Address]
+      - ['http://rdfs.co/juso/address', Address]
+      - ['http://ns.nature.com/terms/webpage',$(web)]
+      - ['http://purl.org/eem#hasEPCID',$(nom_epci)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(coordonnees)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/coworking-france@public/EspaceCoworking/$(nom)-$(ville)/
+  Address:
+    predicateobjects:
+      - [a, 'http://rdfs.co/juso/Address']
+      - [a, 'http://schema.org/Place']
+      - ['http://rdfs.co/juso/full_address', $(adress)]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(adresse)]
+      - ['http://dbpedia.org/ontology/city', Ville]
+      - ['http://schema.org/postalCode', $(code_postal)]
+      - ['http://dbpedia.org/ontology/postalCode', $(code_postal)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/coworking-france@public/Adress/$(adresse)/
+  Ville:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://schema.org/City']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(ville)]
+      - ['http://dbpedia.org/ontology/department', Department]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isPartOf', Department]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/coworking-france@public/City/$(ville)/
+  Department:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Department']
+      - [a, 'http://dbpedia.org/ontology/GovernmentalAdministrativeRegion']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_dep)]
+      - ['http://dbpedia.org/ontology/region', Region]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Region]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/coworking-france@public/Department/$(nom_dep)/
+  Region:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Region']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_reg)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/coworking-france@public/Region/$(nom_reg)/
+sources:
+  dataset-source: [commodity-prices-since-1980@public@public.json~jsonpath, '$.[*].fields']

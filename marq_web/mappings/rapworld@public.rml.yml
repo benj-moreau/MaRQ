@@ -1,0 +1,60 @@
+mappings:
+  field-location_city:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://schema.org/City']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(location_city)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/rapworld@public/City/$(location_city)/
+  field-location_neighborhood:
+    predicateobjects:
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://dbpedia.org/ontology/CityDistrict']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(location_neighborhood)]
+      - ['http://dbpedia.org/ontology/city', field-location_city]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', field-location_city]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(location_coordinates)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/rapworld@public/CityDistrict/$(location_neighborhood)/
+  field-name:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - [a, 'http://dbpedia.org/ontology/Singer']
+      - [a, 'http://dbpedia.org/ontology/MusicalArtist']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#SocialEntity']
+      - [a, 'http://purl.org/net/provenance/ns#HumanAgent']
+      - [a, 'http://purl.org/vocab/frbr/core#ResponsibleEntity']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Individual']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.w3.org/2000/01/rdf-schema#Resource']
+      - [a, 'http://purl.org/dc/elements/1.1/Agent']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name)]
+      - ['http://dbpedia.org/ontology/name', $(name)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(bio_summary)]
+      - ['http://dbpedia.org/ontology/activeYearsEndDate', $(bio_yearsactiveend), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['http://dbpedia.org/ontology/activeYearsStartDate', $(bio_yearsactivestart), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['http://schema.org/birthDate', $(bio_birthdate), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['http://purl.org/ontology/mo/wikipedia', $(bio_url)]
+      - ['http://xmlns.com/foaf/0.1/isPrimaryTopicOf', $(bio_url)]
+      - ['http://dbpedia.org/ontology/location', field-location_neighborhood]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/rapworld@public/Singer/$(name)/
+sources:
+  dataset-source: [rapworld@public.json~jsonpath, '$.[*].fields']

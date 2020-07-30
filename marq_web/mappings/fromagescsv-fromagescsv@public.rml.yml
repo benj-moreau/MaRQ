@@ -1,0 +1,41 @@
+mappings:
+  cheese:
+    predicateobjects:
+      - [a, 'http://open.vocab.org/terms/Cheese']
+      - [a, 'http://dbpedia.org/ontology/Cheese']
+      - [a, 'http://dbpedia.org/ontology/Food']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(fromage)]
+      - ['http://dbpedia.org/ontology/ingredientName', $(lait)]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasPart', $(lait)]
+      - ['http://schema.org/sameAs', $(page_francaise)]
+      - ['http://schema.org/sameAs', $(english_page)]
+      - ['http://schema.org/sameAs', 'http://dbpedia.org/resource/$(fromage)']
+      - ['http://dbpedia.org/ontology/department', department]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isPartOf', department]
+      - ['http://dbpedia.org/ontology/thumbnail', image]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isExpressedBy', image]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/fromagescsv-fromagescsv@public/Cheese/$(fromage)/
+  department:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Department']
+      - [a, 'http://dbpedia.org/ontology/GovernmentalAdministrativeRegion']
+      - [a, 'http://dbpedia.org/ontology/AdministrativeRegion']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(departement)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(geo_point_2d)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/fromagescsv-fromagescsv@public/Department/$(departement)/
+  image:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://xmlns.com/foaf/0.1/Document']
+    source: dataset-source
+    subject: $(image)
+sources:
+  dataset-source: [fromagescsv-fromagescsv@public.json~jsonpath, '$.[*].fields']

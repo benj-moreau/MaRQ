@@ -1,0 +1,97 @@
+mappings:
+  address:
+    predicateobjects:
+      - [a, 'http://www.w3.org/2006/vcard/ns#Address']
+      - [a, 'http://rdfs.co/juso/Address']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Addressing']
+      - [a, 'https://schema.org/PostalAddress']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(address1)]
+      - ['http://dbpedia.org/ontology/city', city]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', city]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-beer-database@public-us/Address/$(address1)/
+  beer:
+    predicateobjects:
+      - [a, 'http://rdfs.co/bevon/Beer']
+      - [a, 'http://rdfs.co/bevon/FermentedBeverage']
+      - [a, 'http://www.productontology.org/id/Beer']
+      - [a, 'http://rdfs.co/bevon/AlcoholicBeverage']
+      - [a, 'http://rdfs.co/bevon/Beverage']
+      - [a, 'http://www.productontology.org/id/Alcoholic_beverage']
+      - [a, 'http://data.lirmm.fr/ontologies/food#Food']
+      - [a, 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid']
+      - [a, 'http://www.productontology.org/id/Drink']
+      - [a, 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#ConsumableThing']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name)]
+      - ['http://rdfs.co/bevon/name', $(name)]
+      - ['http://rdfs.co/bevon/ibu', $(ibu)]
+      - ['http://rdfs.co/bevon/abv', $(abv)]
+      - ['http://rdfs.co/bevon/srm', $(srm)]
+      - ['http://rdfs.co/bevon/brewery', brewery]
+      - ['http://dbpedia.org/ontology/category', $(cat_name)]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isClassifiedBy', $(cat_name)]
+      - ['http://dbpedia.org/ontology/category', $(style_name)]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isClassifiedBy', $(style_name)]
+      - ['http://schema.org/category', $(cat_name)]
+      - ['http://schema.org/category', $(style_name)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-beer-database@public-us/Beer/$(name)/
+  brewery:
+    predicateobjects:
+      - [a, 'http://rdfs.co/bevon/Brewery']
+      - [a, 'http://dbpedia.org/ontology/Brewery']
+      - [a, 'http://dbpedia.org/ontology/Company']
+      - [a, 'http://schema.org/Brewery']
+      - [a, 'http://schema.org/FoodEstablishment']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name_breweries)]
+      - ['http://schema.org/url', $(website)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(coordinates)]
+      - ['http://schema.org/address', address]
+      - ['http://rdfs.co/juso/address', address]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-beer-database@public-us/Brewery/$(name_breweries)/
+  city:
+    predicateobjects:
+      - [a, 'http://schema.org/City']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://www.wikidata.org/entity/Q515']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(city)]
+      - ['http://dbpedia.org/ontology/state', state]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', state]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-beer-database@public-us/City/$(city)/
+  country:
+    predicateobjects:
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://www.wikidata.org/entity/Q6256']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(country)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-beer-database@public-us/Country/$(country)/
+  state:
+    predicateobjects:
+      - [a, 'http://www.w3.org/ns/oa#State']
+      - [a, 'http://rdf.geospecies.org/ont/geospecies#State']
+      - [a, 'http://www.geonames.org/ontology#Feature']
+      - [a, 'http://dbpedia.org/ontology/State']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/State']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(state)]
+      - ['http://dbpedia.org/ontology/country', country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-beer-database@public-us/State/$(state)/
+sources:
+  dataset-source: [open-beer-database@public-us.json~jsonpath, '$.records.[*].fields']

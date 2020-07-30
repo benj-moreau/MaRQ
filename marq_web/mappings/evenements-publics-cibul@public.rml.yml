@@ -1,0 +1,71 @@
+mappings:
+  city:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://schema.org/City']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(city)]
+      - ['http://dbpedia.org/ontology/department', department]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isPartOf', department]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/evenements-publics-cibul@public/City/$(city)/
+  department:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Department']
+      - [a, 'http://dbpedia.org/ontology/GovernmentalAdministrativeRegion']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(department)]
+      - ['http://dbpedia.org/ontology/region', region]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', region]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/evenements-publics-cibul@public/Department/$(department)/
+  event:
+    predicateobjects:
+      - [a, 'http://schema.org/Event']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/dc/dcmitype/Event']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(title)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(description)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(descriptif)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(free_text)]
+      - ['http://dbpedia.org/ontology/thumbnail', image]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isExpressedBy', image]
+      - ['https://schema.org/location', location]
+      - ['http://purl.org/dc/elements/1.1/language', $(lang)]
+      - ['http://www.europeana.eu/schemas/edm/hasType', $(lang)]
+      - ['https://schema.org/inLanguage', $(lang)]
+      - ['https://schema.org/startDate', $(date_start), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['https://schema.org/endDate', $(date_end), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['http://dbpedia.org/ontology/dateLastUpdated', $(updated_at), 'http://www.w3.org/2001/XMLSchema#dateTime']
+    source: dataset-source
+    subject: $(link)
+  image:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+    source: dataset-source
+    subject: $(image)
+  location:
+    predicateobjects:
+      - [a, 'https://schema.org/PostalAddress']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(address)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(address)]
+      - ['https://schema.org/streetAddress', $(address)]
+      - ['https://schema.org/areaServed', $(latlon)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(latlon)]
+      - ['http://dbpedia.org/ontology/city', city]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', city]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/evenements-publics-cibul@public/Location/$(address)/
+  region:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Region']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(region)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/evenements-publics-cibul@public/Region/$(region)/
+sources:
+  dataset-source: [evenements-publics-cibul@public.json~jsonpath, '$.[*].fields']

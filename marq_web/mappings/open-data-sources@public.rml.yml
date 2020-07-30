@@ -1,0 +1,47 @@
+mappings:
+  country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(country)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(location)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat', $(latitude)]
+      - ['http://ontology.eil.utoronto.ca/icontact.owl#addressDataProperty', $(latitude)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#long', $(longitude)]
+      - ['http://ontology.eil.utoronto.ca/icontact.owl#addressDataProperty', $(longitude)]
+      - ['http://www.w3.org/2002/07/owl#topDataProperty', $(longitude)]
+      - ['http://schema.org/sameAs', 'http://dbpedia.org/resource/$(country)']
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-data-sources@public/Country/$(country)/
+  open-data-portal:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Website']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://schema.org/WebPage']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name)]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(description)]
+      - ['http://dbpedia.org/ontology/publisher', organisation]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#coparticipatesWith', organisation]
+    source: dataset-source
+    subject: $(url)
+  organisation:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Organisation']
+      - [a, 'http://dbpedia.org/ontology/Agent']
+      - [a, 'http://schema.org/Organization']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#SocialPerson']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(organisation)]
+      - ['http://dbpedia.org/ontology/country', country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-data-sources@public/Organisation/$(organisation)/
+sources:
+  dataset-source: [open-data-sources@public.json~jsonpath, '$.[*].fields']
+

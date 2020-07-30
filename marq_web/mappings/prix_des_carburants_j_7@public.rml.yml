@@ -1,0 +1,110 @@
+mappings:
+  GasStation:
+    predicateobjects:
+      - [a, 'http://schema.org/GasStation']
+      - [a, 'http://schema.org/AutomotiveBusiness']
+      - [a, 'http://schema.org/LocalBusiness']
+      - ['https://schema.org/brand', brand]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(geo_point)]
+      - ['https://schema.org/brand', Organisation]
+      - ['https://schema.org/openingHours', $(timetable)]
+      - ['https://schema.org/address', $(address)]
+      - ['http://dbpedia.org/ontology/city', city]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', city]
+      - ['https://schema.org/makesOffer', offer-e10]
+      - ['https://schema.org/makesOffer', offer-sp95]
+      - ['https://schema.org/makesOffer', offer-sp98]
+      - ['https://schema.org/makesOffer', offer-e85]
+      - ['https://schema.org/makesOffer', offer-GPLc]
+      - ['https://schema.org/makesOffer', offer-gazole]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/GasStation/$(id)/
+  Organisation:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Organisation']
+      - [a, 'http://dbpedia.org/ontology/Agent']
+      - [a, 'http://schema.org/Organization']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object']
+      - [a, 'http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing']
+      - [a, 'http://www.w3.org/ns/org#FormalOrganization']
+      - [a, 'http://purl.org/dc/elements/1.1/Agent']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(brand)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Organisation/$(brand)/
+  city:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://schema.org/City']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(city)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/City/$(city)/
+  offer-GPLc:
+    predicateobjects:
+      - [a, 'https://schema.org/Offer']
+      - ['https://schema.org/category', Gas]
+      - ['https://schema.org/priceCurrency', euros]
+      - ['https://schema.org/itemOffered', GPLc]
+      - ['https://schema.org/price', $(price_gplc)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Offer/$(id)-GPLc/
+  offer-e10:
+    predicateobjects:
+      - [a, 'https://schema.org/Offer']
+      - ['https://schema.org/category', Gas]
+      - ['https://schema.org/priceCurrency', euros]
+      - ['https://schema.org/itemOffered', e10]
+      - ['https://schema.org/price', $(price_e10)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Offer/$(id)-e10/
+  offer-e85:
+    predicateobjects:
+      - [a, 'https://schema.org/Offer']
+      - ['https://schema.org/category', Gas]
+      - ['https://schema.org/priceCurrency', euros]
+      - ['https://schema.org/itemOffered', e85]
+      - ['https://schema.org/price', $(price_e85)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Offer/$(id)-e85/
+  offer-gazole:
+    predicateobjects:
+      - [a, 'https://schema.org/Offer']
+      - ['https://schema.org/category', Gas]
+      - ['https://schema.org/priceCurrency', euros]
+      - ['https://schema.org/itemOffered', gazole]
+      - ['https://schema.org/price', $(price_gazole)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Offer/$(id)-gazole/
+  offer-sp95:
+    predicateobjects:
+      - [a, 'https://schema.org/Offer']
+      - ['https://schema.org/category', Gas]
+      - ['https://schema.org/priceCurrency', euros]
+      - ['https://schema.org/itemOffered', sp95]
+      - ['https://schema.org/price', $(price_sp95)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Offer/$(id)-sp95/
+  offer-sp98:
+    predicateobjects:
+      - [a, 'https://schema.org/Offer']
+      - ['https://schema.org/category', Gas]
+      - ['https://schema.org/priceCurrency', euros]
+      - ['https://schema.org/itemOffered', sp98]
+      - ['https://schema.org/price', $(price_sp98)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/prix_des_carburants_j_7@public/Offer/$(id)-sp98/
+sources:
+  dataset-source: [prix_des_carburants_j_7@public.json~jsonpath, '$.[*].fields']

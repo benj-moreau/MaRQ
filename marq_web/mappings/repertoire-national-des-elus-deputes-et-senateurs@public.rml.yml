@@ -1,0 +1,51 @@
+mappings:
+  Department:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Department']
+      - [a, 'http://dbpedia.org/ontology/GovernmentalAdministrativeRegion']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_dept)]
+      - ['http://dbpedia.org/ontology/region', Region]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Region]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/repertoire-national-des-elus-deputes-et-senateurs@public/Department/$(nom_dept)/
+  Region:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Region']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_region)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/repertoire-national-des-elus-deputes-et-senateurs@public/Region/$(nom_region)/
+  Profession:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Profession']
+      - [a, 'http://schema.org/Occupation']
+      - [a, 'http://dbpedia.org/ontology/PersonFunction']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(libelle_de_la_profession)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/repertoire-national-des-elus-deputes-et-senateurs@public/Profession/$(libelle_de_la_profession)/
+  Parlementaire:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Politician']
+      - [a, 'http://dbpedia.org/ontology/Person']
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(prenom_de_l_elu) $(nom_de_l_elu) $(libelle_de_la_profession)]
+      - ['http://dbpedia.org/ontology/name', $(prenom_de_l_elu)]
+      - ['https://schema.org/givenName', $(prenom_de_l_elu)]
+      - ['https://schema.org/familyName', $(nom_de_l_elu)]
+      - ['http://dbpedia.org/ontology/AdministrativeArea', Region]
+      - ['http://dbpedia.org/ontology/profession', Profession]
+      - ['http://xmlns.com/foaf/0.1/gender', $(code_sexe)]
+      - ['https://schema.org/birthDate', $(date_de_naissance)]
+      - ['https://schema.org/startDate', $(date_de_debut_du_mandat)]
+      - ['http://dbpedia.org/ontology/department', Department]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/repertoire-national-des-elus-deputes-et-senateurs@public/Parlementaire/$(nom_de_l_elu)$(prenom_de_l_elu)$(date_de_naissance)/
+sources:
+  dataset-source: [commodity-prices-since-1980@public@public.json~jsonpath, '$.[*].fields']

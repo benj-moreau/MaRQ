@@ -1,0 +1,75 @@
+mappings:
+  Food:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Food']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#FunctionalSubstance']
+      - [a, 'http://www.ontotext.com/proton/protonext#Food']
+      - [a, 'http://www.ontotext.com/proton/protontop#Object']
+      - [a, 'http://schema.org/Product']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#ProductOrService']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(product_name)]
+      - ['https://schema.org/name', $(product_name)]
+      - ['http://data.lirmm.fr/ontologies/food#code', $(code)]
+      - ['http://data.lirmm.fr/ontologies/food#saltEquivalentPer100g', $(salt_100g)]
+      - ['http://dbpedia.org/ontology/carbohydrate', $(carbohydrates_100g)]
+      - ['http://dbpedia.org/ontology/fat', $(fat_100g)]
+      - ['http://data.lirmm.fr/ontologies/food#sugarsPer100g', $(sugars_100g)]
+      - ['http://dbpedia.org/ontology/servingSize', $(serving_size)]
+      - ['http://dbpedia.org/ontology/protein', $(proteins_100g)]
+      - ['http://schema.org/ingredients', $(ingredients_text)]
+      - ['https://schema.org/image', image]
+      - ['https://schema.org/image', image_ingredients]
+      - ['https://schema.org/manufacturer', company]
+      - ['https://schema.org/brand', company]
+      - ['https://schema.org/category', $(main_category_fr), fr~lang]
+      - ['https://schema.org/category', $(categories)]
+      - ['https://schema.org/category', $(main_category), en~lang]
+    source: dataset-source
+    subject: $(url)
+  company:
+    predicateobjects:
+      - [a, 'https://schema.org/Organization']
+      - [a, 'http://dbpedia.org/ontology/Company']
+      - [a, 'http://dbpedia.org/ontology/Organisation']
+      - [a, 'http://dbpedia.org/ontology/Agent']
+      - [a, 'http://schema.org/Organization']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#SocialPerson']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(brands)]
+      - ['http://dbpedia.org/ontology/country', company_country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', company_country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-food-facts-products@public/Company/$(brands)/
+  company_country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(countries), en~lang]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(countries_fr), fr~lang]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/open-food-facts-products@public/Country/$(countries)/
+  image:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://xmlns.com/foaf/0.1/Document']
+    source: dataset-source
+    subject: $(image_url)
+  image_ingredients:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://xmlns.com/foaf/0.1/Document']
+    source: dataset-source
+    subject: $(image_ingredients_url)
+sources:
+  dataset-source: [open-food-facts-products@public.json~jsonpath, '$.[*].fields']

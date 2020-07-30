@@ -1,0 +1,54 @@
+mappings:
+  Departement:
+    predicateobjects:
+      - [a, 'http://data.ign.fr/def/geofla#Departement']
+      - [a, 'http://data.ign.fr/def/geofla#UniteAdministrative']
+      - [a, 'http://rdf.insee.fr/def/geo#Departement']
+      - [a, 'http://dbpedia.org/ontology/Department']
+      - [a, 'http://dbpedia.org/ontology/GovernmentalAdministrativeRegion']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_du_departement)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing', $(geom)]
+      - ['http://www.mindswap.org/2003/owl/geo/geoFeatures20040307.owl#shape', $(geom)]
+      - ['http://dbpedia.org/ontology/region', Region]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Region]
+      - ['http://dbpedia.org/ontology/departmentCode', $(code_dept)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/donnees-sur-les-medecins-accredites@public/Departement/$(nom_du_departement)/
+  Etablissement:
+    predicateobjects:
+      - [a, 'https://schema.org/MedicalOrganization']
+      - ['https://schema.org/location', Departement]
+    source: dataset-source
+    subject: http://finess.sante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFiness=$(code_finess)
+  Medecin:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - [a, 'http://linkedgeodata.org/ontology/Doctor']
+      - [a, 'http://linkedgeodata.org/ontology/Amenity']
+      - ['https://schema.org/affiliation', Etablissement]
+      - ['https://schema.org/familyName', $(nom_du_medecin)]
+      - ['https://schema.org/givenName', $(prenom_du_medecin)]
+      - ['https://pending.schema.org/jobTitle', $(libelle_long_de_la_specialite_du_medecin)]
+      - ['http://dbpedia.org/ontology/speciality', $(libelle_long_de_la_specialite_du_medecin)]
+      - ['https://schema.org/disambiguatingDescription', 'OA:$(nom_de_l_oa_a_du_medecin) date-accreditation:$(date_d_accreditation_du_medecin)']
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/donnees-sur-les-medecins-accredites@public/Doctor/$(nom_du_medecin)_$(prenom_du_medecin)_$(code_finess)_$(nom_de_l_oa_a_du_medecin)/
+  Region:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Region']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://data.ign.fr/def/geofla#Region']
+      - [a, 'http://data.ign.fr/def/geofla#UniteAdministrative']
+      - [a, 'http://rdf.insee.fr/def/geo#Region']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(region_d_exercice)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/donnees-sur-les-medecins-accredites@public/Region/$(region_d_exercice)/
+sources:
+  dataset-source: [donnees-sur-les-medecins-accredites@public.json~jsonpath, '$.records.[*].fields']

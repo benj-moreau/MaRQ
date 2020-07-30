@@ -1,0 +1,37 @@
+mappings:
+  movie:
+    source: dataset-source
+    subject: $(url_en)
+    predicateobjects:
+      - [a, 'https://schema.org/Movie']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(title)]
+      - ['https://schema.org/datePublished', $(year), 'http://www.w3.org/2001/XMLSchema#integer']
+      - ['https://schema.org/director', director]
+      - ['https://schema.org/producer', producer]
+      - ['https://schema.org/thumbnailUrl', $(url_poster)]
+      - ['https://schema.org/image', image]
+  director :
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/cats-in-movies@public/Person/$(directed_by)/
+    predicateobjects:
+      - [a, 'https://schema.org/Person']
+      - [a, 'http://dbpedia.org/ontology/MovieDirector']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(directed_by)]
+  producer:
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/cats-in-movies@public/Person/$(produced_by)/
+    predicateobjects:
+      - [a, 'https://schema.org/Person']
+      - [a, 'http://dbpedia.org/ontology/Producer']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(produced_by)]
+  image:
+    source: dataset-source
+    subject: $(image)
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://xmlns.com/foaf/0.1/Document']
+      - [a, 'http://schema.org/CreativeWork']
+sources:
+  dataset-source: [data.json~jsonpath, '$.records.[*].fields']

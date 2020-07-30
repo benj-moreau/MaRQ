@@ -1,0 +1,25 @@
+mappings:
+  make:
+    predicateobjects:
+      - [a, 'https://schema.org/Brand']
+      - [a, 'https://schema.org/Organization']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(marque)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/vehicules-commercialises@public/Brand/$(marque)/
+  model:
+    predicateobjects:
+      - [a, 'http://schema.org/Car']
+      - [a, 'https://schema.org/Vehicle']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', '$(designation_commerciale) n°cnit $(cnit)']
+      - ['https://schema.org/brand', make]
+      - ['https://schema.org/modelDate', $(annee), 'http://www.w3.org/2001/XMLSchema#integer']
+      - ['https://schema.org/bodyType', $(carrosserie)]
+      - ['https://schema.org/emissionsCO2', $(co2_g_km), 'http://www.w3.org/2001/XMLSchema#double']
+      - ['https://schema.org/fuelConsumption', $(consommation_mixte_l_100km), 'http://www.w3.org/2001/XMLSchema#double']
+      - ['https://schema.org/vehicleIdentificationNumber', $(champ_v9)]
+      - ['https://schema.org/fuelType', $(carburant)]
+      - ['https://schema.org/numberOfForwardGears', $(boite_de_vitesse)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/vehicules-commercialises@public/Car/$(cnit)/
+sources:
+  dataset-source: [vehicules-commercialises@public.json~jsonpath, '$.records.[*].fields']

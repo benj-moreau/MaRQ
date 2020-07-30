@@ -1,0 +1,25 @@
+mappings:
+  commodity:
+    predicateobjects:
+      - [a, 'https://w3id.org/saref#Commodity']
+      - [a, 'https://w3id.org/seas/Commodity']
+      - [a, 'https://w3id.org/seas/Good']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(commodity)]
+      - ['https://w3id.org/seas/price', price]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/commodity-prices-since-1980@public/Commodity/$(commodity)/
+  price:
+    predicateobjects:
+      - [a, 'https://w3id.org/seas/Price']
+      - [a, 'https://w3id.org/saref#Price']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(price)]
+      - ['https://w3id.org/saref#hasValue', $(price), 'http://www.w3.org/2001/XMLSchema#float']
+      - ['https://w3id.org/seas/evaluatedValue', $(price), 'http://www.w3.org/2001/XMLSchema#float']
+      - ['https://w3id.org/saref#hasTime', $(date), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['https://w3id.org/saref#isMeasuredIn', 'http://www.wurvoc.org/vocabularies/om-1.8/United_States_dollar']
+      - ['http://schema.org/price', $(price)]
+      - ['http://dbpedia.org/ontology/price', $(price)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/commodity-prices-since-1980@public/Price/$(commodity)-$(date)/
+sources:
+  dataset-source: [commodity-prices-since-1980@public@public.json~jsonpath, '$.[*].fields']

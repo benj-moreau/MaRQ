@@ -1,0 +1,59 @@
+mappings:
+  Member:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Politician']
+      - [a, 'http://dbpedia.org/ontology/Person']
+      - [a, 'http://dbpedia.org/ontology/Congressman']
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#SocialEntity']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name)]
+      - ['https://schema.org/familyName', $(name)]
+      - ['http://dbpedia.org/ontology/party', party]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isMemberOf', party]
+      - ['http://dbpedia.org/ontology/state', state]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', state]
+      - ['http://schema.org/image', image]
+    source: dataset-source
+    subject: $(url)
+  image:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Image']
+      - [a, 'http://dbpedia.org/ontology/Document']
+      - [a, 'http://dbpedia.org/ontology/Work']
+      - [a, 'http://xmlns.com/foaf/0.1/Document']
+      - [a, 'http://schema.org/CreativeWork']
+      - [a, 'http://sw-portal.deri.org/ontologies/swportal#Publication']
+    source: dataset-source
+    subject: $(img)
+  party:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/PoliticalParty']
+      - [a, 'http://dbpedia.org/ontology/Organisation']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(party)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/us-115th-congress-members@public/PoliticalParty/$(party)/
+  state:
+    predicateobjects:
+      - [a, 'http://schema.org/State']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://dbpedia.org/ontology/State']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(state_label)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(geo_point_2d)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing', $(geo_shape)]
+      - ['http://www.mindswap.org/2003/owl/geo/geoFeatures20040307.owl#shape', $(geo_shape)]
+      - ['http://reference.data.gov/def/govdata/stateCode', $(state_code)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/us-115th-congress-members@public/State/$(state_label)/
+sources:
+  dataset-source: [us-115th-congress-members@public.json~jsonpath, '$.records.[*].fields']

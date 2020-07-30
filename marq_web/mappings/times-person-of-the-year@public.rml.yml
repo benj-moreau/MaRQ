@@ -1,0 +1,39 @@
+mappings:
+  Person:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://dbpedia.org/ontology/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - ['http://dbpedia.org/ontology/award', Award]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(name)]
+      - ['http://purl.org/vocab/bio/0.1/position', $(title)]
+      - ['http://dbpedia.org/ontology/deathYear', $(death_year)]
+      - ['http://dbpedia.org/ontology/birthYear', $(birth_year)]
+      - ['http://dbpedia.org/ontology/livingPlace', Country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/times-person-of-the-year@public/Person/$(name)/
+  Award:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Award']
+      - ['http://dbpedia.org/ontology/year', $(year)]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(honor)]
+      - ['http://dbpedia.org/ontology/category', $(category)]
+      - ['https://lemon-model.net/lemon#context', $(context)]
+      - ['http://schema.org/winner', Person]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/times-person-of-the-year@public/Award/$(honor)-$(year)/
+  Country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://dbpedia.org/ontology/Place']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(country)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/times-person-of-the-year@public/Country/$(country)/
+sources:
+  dataset-source: [times-person-of-the-year@public.json~jsonpath, '$.records.[*].fields']

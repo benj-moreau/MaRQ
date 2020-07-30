@@ -1,0 +1,57 @@
+mappings:
+  bean_country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(broad_bean_origin)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/chocolate-bars@public/Country/$(broad_bean_origin)/
+  chocolate_bar:
+    predicateobjects:
+      - [a, 'http://www.productontology.org/id/Chocolate']
+      - [a, 'http://dbpedia.org/ontology/Food']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#FunctionalSubstance']
+      - [a, 'http://www.ontotext.com/proton/protonext#Food']
+      - [a, 'http://www.ontotext.com/proton/protontop#Object']
+      - [a, 'http://schema.org/Product']
+      - [a, 'http://purl.org/goodrelations/v1#ProductOrService']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(company) $(name) chocolate bar]
+      - ['http://www.w3.org/2000/01/rdf-schema#comment', $(company) $(name) chocolate bar with $(cocoa_percent)% cacao rated $(rating)/5]
+      - ['https://schema.org/manufacturer', company]
+      - ['http://kmi.open.ac.uk/projects/smartproducts/ontologies/food.owl#hasGeographicalProvenance',
+         bean_country]
+      - ['http://dbpedia.org/ontology/rating', $(rating)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/chocolate-bars@public/Chocolate/$(name)-$(ref)/
+  company:
+    predicateobjects:
+      - [a, 'https://schema.org/Organization']
+      - [a, 'http://dbpedia.org/ontology/Company']
+      - [a, 'http://dbpedia.org/ontology/Organisation']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(company)]
+      - ['http://dbpedia.org/ontology/country', company_country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', company_country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/chocolate-bars@public/Company/$(company)/
+  company_country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(company_location)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/chocolate-bars@public/Country/$(company_location)/
+sources:
+  dataset-source: [chocolate-bars@public.json~jsonpath, '$.[*].fields']
