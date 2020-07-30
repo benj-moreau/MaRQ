@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 import json
+from os import listdir
+from os.path import isfile, join
 
 
 @require_http_methods(['GET'])
@@ -11,7 +13,9 @@ def home(request):
 
 @require_http_methods(['GET'])
 def form(request):
-    return render(request, 'form.html')
+    mappings_path = 'marq_web/mappings/'
+    mapping_files = [f for f in listdir(mappings_path) if isfile(join(mappings_path, f)) and f.endswith('rml.yml')]
+    return render(request, 'form.html', {'mapping_files': json.dumps(mapping_files)})
 
 
 @csrf_exempt

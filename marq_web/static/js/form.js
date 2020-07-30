@@ -3,12 +3,7 @@ var form = new Vue({
     data: {
         test: '',
         yourMapping: { name: 'Choose a mapping', file: 'default'},
-        mappings: [
-            { name: 'exemple1.yml', file: '' },
-            { name: 'exemple2.yml', file: '' },
-            { name: 'exemple3.yml', file: '' },
-            { name: 'exemple4.yml', file: '' }
-        ],
+        mappings: mapping_files,
         checkedMappings: []
     },
     methods: {
