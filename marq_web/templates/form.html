@@ -32,31 +32,54 @@
             </div>
         </nav>
 
-        <section class="page-section portfolio">
+        <section class="page-section portfolio" style="margin-top: 4em;">
             <form class="was-validated" action="/result" method="post">
-                {% verbatim %}
                 <div class="container">
                     <div class="row justify-content-md-center">
+                        <div class="col-sm align-self-end">
+                            <p>
+                                You can select several RDF mappings to compare them.
+                                This is <a href="https://github.com/benjimor/ods-ld-mappings">a set of RDF mappings</a>
+                                for datasets from <a href="https://data.opendatasoft.com/">Opendatasoft Data Network</a>.
+                            </p>
+                        </div>
+                        <div class="col-sm"></div>
+                        <div class="col-sm align-self-end">
+                            <p>
+                                You can also add your RDF mapping in <a href="https://data.opendatasoft.com/">YARRRML</a> syntax.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row justify-content-md-center">
+                        <div class="col-sm">
+                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="-webkit-transform: scaleX(-1);transform: scaleX(-1) rotate(0deg);" class="img-responsive float-right">
+                        </div>
+                        <div class="col-sm"></div>
+                        <div class="col-sm">
+                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: rotate(-40deg)" class="img-responsive float-left">
+                        </div>
+                    </div>
+                    {% verbatim %}
+                    <div class="row justify-content-md-center">
                         <div class="col-md-auto">
-                            <select class="selectpicker" multiple>
+                            <select name="mappingFiles" multiple class="selectpicker" id="mappingFiles">
                                 <option v-for="mapping in mappings">{{ mapping }}</option>
                             </select>
                         </div>
                         <div class="col-md-auto">
                             <div class="custom-file">
-                                <label class="custom-file-label" for="addmapping">Add mapping</label>
-                                <input type="file" class="custom-file-input" id="addmapping" name="myFile" @change="addFile($event)">
+                                <label class="custom-file-label" for="customMapping" id="fileLabel">Upload a YARRRML file</label>
+                                <input type="file" class="custom-file-input" id="customMapping" name="customMapping" @change="addFile($event)">
                             </div>
                         </div>
                     </div>
+                    {% endverbatim %}
                 </div>
 
                 <!-- evaluate -->
                 <div class="mx-auto mt-5" style="width: 270px">
-                    <button type="submit" class="btn btn-lg btn-outline-primary">Evaluate <i class="fas fa-vial"></i></button>
+                    <button type="submit" class="btn btn-lg btn-outline-primary">Generate <i class="fas fa-vial"></i></button>
                 </div>
-
-                {% endverbatim %}
             </form>
         </section>
 
@@ -69,7 +92,7 @@
                         <img src='{% static "img/logo-ls2n.png" %}' alt="ls2n logo" height="50">
                     </div>
                     <div class="col-sm">
-                        <small>This site is available on <a href="https://github.com/benjimor/EvaMap-Web">GitHub</a> under MIT license</small>
+                        <small>This site is available on <a href="https://github.com/benjimor/MaRQ">GitHub</a> under MIT license</small>
                     </div>
                     <div class="col-sm">
                         <img src='{% static "img/ods-logo.png" %}' alt="ods logo" height="30">

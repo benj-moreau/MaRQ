@@ -21,6 +21,10 @@ def form(request):
 @csrf_exempt
 @require_http_methods(['POST'])
 def result(request):
+    mapping_files = request.POST#.get('mappingFiles')
+    custom_mapping = request.POST.get('customMapping')
+    print(mapping_files)
+    print(custom_mapping)
     mock_result = {"comparaisons":
         [
             {"Source":"mappingReview.yml",
