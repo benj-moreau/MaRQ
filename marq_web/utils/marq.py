@@ -381,226 +381,165 @@ def calcul_score(data):
     return score
 
 
-parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
+def get_results(yarrrml_mappings):
+    result = {'data': [], 'queries': []}
 
-if sys.argv[1] != 'mappings':
-    for it in range(len(sys.argv)-1):
-        parser.add_argument('mapping' + str(it), type=str, help='yarrrml mapping filepath')
-    args = parser.parse_args()
-
-    # open yarrrml file
-    streams = []
     mapping_names = []
-    for key in args.__dict__:
-        if args.__dict__[key] is not None:
-            streams.append(open(args.__dict__[key]))
-            mapping_names.append(args.__dict__[key])
-    print(mapping_names)
-    # loading the text file
-    yarrrml_mappings = []
-    for it in range(len(streams)):
-        yarrrml_mappings.append(load(streams[it], Loader=Loader))
-else:
-    # loading the text file from the directory mappings
-    yarrrml_mappings = []
-    mapping_names = os.listdir('mappings')
-    for element in mapping_names:
-        yarrrml_mappings.append(load(open('mappings/' + element), Loader=Loader))
+    for it in range(0, len(yarrrml_mappings)):
+        yarrrml = yarrrml_mappings[it]
+        sources = yarrrml.get('sources')
+        source = sources.get('dataset-source')
+        mapping_names.append(source[0].split('.')[0])
 
-# method test
-pp = pprint.PrettyPrinter(indent=4)
+    # compare every mapping with every other mappings and print data and results
+    for it1 in range(0, len(yarrrml_mappings)):
+        for it2 in range(0, len(yarrrml_mappings)):
+            if it1 != it2:
+                data_1, results_1 = get_join_subject_subject(yarrrml_mappings[it1], yarrrml_mappings[it2])
+                data_2, results_2 = get_join_object_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
+                data_3, results_3 = get_join_subject_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
 
-# stock every mapping rating
-ranking = [[], []]
+                # calculate the score in order to rank later
+                # we calculate how much M2 adds to M1
+                score_data = []
 
-# print(description_bgp([['?1 test ?1']]))
-
-
-with open('data.json', 'w') as data:
-    with open('queries.txt', 'w') as queries:
-
-        print('{"comparaisons":', file=data)
-        print('\t[', file=data)
-        first = True
-
-        # compare every mapping with every other mappings and print data and results
-        for it1 in range(0, len(yarrrml_mappings)):
-            for it2 in range(0, len(yarrrml_mappings)):
-                if it1 != it2:
-                    data_1, results_1 = get_join_subject_subject(yarrrml_mappings[it1], yarrrml_mappings[it2])
-                    data_2, results_2 = get_join_object_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
-                    data_3, results_3 = get_join_subject_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
-
-                    # calculate the score in order to rank later
-                    # we calculate how much M2 adds to M1
-                    score_data = []
-
-                    # calculate the number of triplet coming from M1 and the number of triplet coming from M2
-                    provenance1_M1 = 0
-                    provenance1_M2 = 0
-                    score_data.append([])
-                    for provs in results_1['subject-subject']:
-                        for prov in provs:
-                            count1 = 0
-                            count2 = 0
-                            count3 = 0
-                            if len(prov[1]) > 2:
+                # calculate the number of triplet coming from M1 and the number of triplet coming from M2
+                provenance1_M1 = 0
+                provenance1_M2 = 0
+                score_data.append([])
+                for provs in results_1['subject-subject']:
+                    for prov in provs:
+                        count1 = 0
+                        count2 = 0
+                        count3 = 0
+                        if len(prov[1]) > 2:
+                            provenance1_M1 = provenance1_M1 + 1
+                            provenance1_M2 = provenance1_M2 + 1
+                            count3 = count3 + 1
+                        else:
+                            if prov[1][1] == '1':
                                 provenance1_M1 = provenance1_M1 + 1
+                                count1 = count1 + 1
+                            else:
                                 provenance1_M2 = provenance1_M2 + 1
-                                count3 = count3 + 1
-                            else:
-                                if prov[1][1] == '1':
-                                    provenance1_M1 = provenance1_M1 + 1
-                                    count1 = count1 + 1
-                                else:
-                                    provenance1_M2 = provenance1_M2 + 1
-                                    count2 = count2 + 1
-                            score_data[0].append([count1, count2, count3])
+                                count2 = count2 + 1
+                        score_data[0].append([count1, count2, count3])
 
-                    provenance2_M1 = 0
-                    provenance2_M2 = 0
-                    score_data.append([])
-                    for provs in results_2['object-object']:
-                        for prov in provs:
-                            count1 = 0
-                            count2 = 0
-                            count3 = 0
-                            if len(prov[1]) > 2:
+                provenance2_M1 = 0
+                provenance2_M2 = 0
+                score_data.append([])
+                for provs in results_2['object-object']:
+                    for prov in provs:
+                        count1 = 0
+                        count2 = 0
+                        count3 = 0
+                        if len(prov[1]) > 2:
+                            provenance2_M1 = provenance2_M1 + 1
+                            provenance2_M2 = provenance2_M2 + 1
+                        else:
+                            if prov[1][1] == '1':
                                 provenance2_M1 = provenance2_M1 + 1
+                            else:
                                 provenance2_M2 = provenance2_M2 + 1
-                            else:
-                                if prov[1][1] == '1':
-                                    provenance2_M1 = provenance2_M1 + 1
-                                else:
-                                    provenance2_M2 = provenance2_M2 + 1
-                                    count2 = count2 + 1
-                            score_data[1].append([count1, count2, count3])
+                                count2 = count2 + 1
+                        score_data[1].append([count1, count2, count3])
 
-                    provenance3_M1 = 0
-                    provenance3_M2 = 0
-                    score_data.append([])
-                    for provs in results_3['subject-object']:
-                        for prov in provs:
-                            count1 = 0
-                            count2 = 0
-                            count3 = 0
-                            if len(prov[1]) > 2:
+                provenance3_M1 = 0
+                provenance3_M2 = 0
+                score_data.append([])
+                for provs in results_3['subject-object']:
+                    for prov in provs:
+                        count1 = 0
+                        count2 = 0
+                        count3 = 0
+                        if len(prov[1]) > 2:
+                            provenance3_M1 = provenance3_M1 + 1
+                            provenance3_M2 = provenance3_M2 + 1
+                            count3 = count3 + 1
+                        else:
+                            if prov[1][1] == '1':
                                 provenance3_M1 = provenance3_M1 + 1
-                                provenance3_M2 = provenance3_M2 + 1
-                                count3 = count3 + 1
+                                count1 = count1 + 1
                             else:
-                                if prov[1][1] == '1':
-                                    provenance3_M1 = provenance3_M1 + 1
-                                    count1 = count1 + 1
-                                else:
-                                    provenance3_M2 = provenance3_M2 + 1
-                                    count2 = count2 + 1
-                            score_data[2].append([count1, count2, count3])
+                                provenance3_M2 = provenance3_M2 + 1
+                                count2 = count2 + 1
+                        score_data[2].append([count1, count2, count3])
 
-                    score = calcul_score(score_data)
+                score = calcul_score(score_data)
 
-                    # only for the first loop
-                    if not first:
-                        first = False
-                        print('\t\t},', file=data)
-                        print(file=data)
-                    else:
-                        first = False
+                # only for the first loop
+                comparison = {"Source": mapping_names[it1],
+                              "Destination": mapping_names[it2],
+                              "Score": score,
+                              "Join_subject_subject":{
+                                  "Number_of_triple_pattern": [],
+                                  "Number_of_triple_pattern_from_M1": None,
+                                  "Number_of_triple_pattern_from_M2": None},
+                              "Join_object_object":{
+                                  "Number_of_triple_pattern": [],
+                                  "Number_of_triple_pattern_from_M1": None,
+                                  "Number_of_triple_pattern_from_M2": None},
+                              "Join_subject_object":{
+                                  "Number_of_triple_pattern": [],
+                                  "Number_of_triple_pattern_from_M1": None,
+                                  "Number_of_triple_pattern_from_M2": None}
+                              }
 
-                    print('\t\t{"Source":"' + mapping_names[it1] + '",', file=data)
-                    print('\t\t "Destination":"' + mapping_names[it2] + '",', file=data)
-                    print('\t\t "Score":"' + str(score) + '",', file=data)
+                if data_1[0] > 0:
+                    for i in range(len(data_1[1])):
+                        comparison["Join_subject_subject"]["Number_of_triple_pattern"].append(data_1[1][i])
+                comparison["Join_subject_subject"]["Number_of_triple_pattern_from_M1"] = provenance1_M1
+                comparison["Join_subject_subject"]["Number_of_triple_pattern_from_M2"] = provenance1_M2
 
-                    # result from subject_subject
-                    print('\t\t "Join_subject_subject":{', file=data)
-                    tempo = ""
-                    if data_1[0] > 0:
-                        for i in range(len(data_1[1])-1):
-                            tempo = tempo + str(data_1[1][i]) + ','
-                        tempo = tempo + str(data_1[1][len(data_1[1])-1])
-                    print('\t\t\t"Number_of_triple_pattern": [' + tempo + '],', file=data)
-                    print('\t\t\t"Number_of_triple_pattern_from_M1": ' + str(provenance1_M1) + ',', file=data)
-                    print('\t\t\t"Number_of_triple_pattern_from_M2": ' + str(provenance1_M2) + '},', file=data)
+                # result from object_object
+                if data_2[0] > 0:
+                    for i in range(len(data_2[1])):
+                        comparison["Join_object_object"]["Number_of_triple_pattern"].append(data_2[1][i])
+                comparison["Join_object_object"]["Number_of_triple_pattern_from_M1"] = provenance2_M1
+                comparison["Join_object_object"]["Number_of_triple_pattern_from_M2"] = provenance2_M2
 
-                    # result from object_object
-                    print('\t\t "Join_object_object":{', file=data)
-                    tempo = ""
-                    if data_2[0] > 0:
-                        for i in range(len(data_2[1])-1):
-                            tempo = tempo + str(data_2[1][i]) + ','
-                        tempo = tempo + str(data_2[1][len(data_2[1])-1])
-                    print('\t\t\t"Number_of_triple_pattern": [' + tempo + '],', file=data)
-                    print('\t\t\t"Number_of_triple_pattern_from_M1": ' + str(provenance2_M1) + ',', file=data)
-                    print('\t\t\t"Number_of_triple_pattern_from_M2": ' + str(provenance2_M2) + '},', file=data)
+                # result from subject_object
+                if data_3[0] > 0:
+                    for i in range(len(data_3[1])):
+                        comparison["Join_subject_object"]["Number_of_triple_pattern"].append(data_3[1][i])
+                comparison["Join_subject_object"]["Number_of_triple_pattern_from_M1"] = provenance3_M1
+                comparison["Join_subject_object"]["Number_of_triple_pattern_from_M2"] = provenance3_M2
 
-                    # result from subject_object
-                    print('\t\t "Join_subject_object":{', file=data)
-                    tempo = ""
-                    if data_3[0] > 0:
-                        for i in range(len(data_3[1])-1):
-                            tempo = tempo + str(data_3[1][i]) + ','
-                        tempo = tempo + str(data_3[1][len(data_3[1])-1])
-                    print('\t\t\t"Number_of_triple_pattern": [' + tempo + '],', file=data)
-                    print('\t\t\t"Number_of_triple_pattern_from_M1": ' + str(provenance3_M1) + ',', file=data)
-                    print('\t\t\t"Number_of_triple_pattern_from_M2": ' + str(provenance3_M2) + '}', file=data)
+                result['data'].append(comparison)
 
-                    for i in range(len(results_1['subject-subject'])):
-                        print('SELECT *', file=queries)
-                        print('WHERE {', file=queries)
-                        for y in results_1['subject-subject'][i]:
-                            if y[1] == "M1 M2":
-                                print(y[0] + '.     #' + mapping_names[it1] + ' and ' + mapping_names[it2], file=queries)
-                            if y[1] == "M1":
-                                print(y[0] + '.     #' + mapping_names[it1], file=queries)
-                            if y[1] == "M2":
-                                print(y[0] + '.     #' + mapping_names[it2], file=queries)
-                        print('}', file=queries)
-                        print(file=queries)
+                for i in range(len(results_1['subject-subject'])):
+                    query = 'SELECT *\nWHERE {\n'
+                    for y in results_1['subject-subject'][i]:
+                        if y[1] == "M1 M2":
+                            query += f'{y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                        if y[1] == "M1":
+                            query += f'{y[0]}   # {mapping_names[it1]}'
+                        if y[1] == "M2":
+                            query += f'{y[0]}   # {mapping_names[it2]}'
+                    query += '}'
+                    result['queries'].append(query)
 
-                    print('---', file=queries)
+                for i in range(len(results_2['object-object'])):
+                    query = 'SELECT *\nWHERE {\n'
+                    for y in results_2['object-object'][i]:
+                        if y[1] == "M1 M2":
+                            query += f'{y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                        if y[1] == "M1":
+                            query += f'{y[0]}   # {mapping_names[it1]}'
+                        if y[1] == "M2":
+                            query += f'{y[0]}   # {mapping_names[it2]}'
+                    query += '}'
+                    result['queries'].append(query)
 
-                    for i in range(len(results_2['object-object'])):
-                        print('SELECT *', file=queries)
-                        print('WHERE {', file=queries)
-                        for y in results_2['object-object'][i]:
-                            if y[1] == "M1 M2":
-                                print(y[0] + '.     #' + mapping_names[it1] + ' and ' + mapping_names[it2], file=queries)
-                            if y[1] == "M1":
-                                print(y[0] + '.     #' + mapping_names[it1], file=queries)
-                            if y[1] == "M2":
-                                print(y[0] + '.     #' + mapping_names[it2], file=queries)
-                        print('}', file=queries)
-                        print(file=queries)
-
-                    print('---', file=queries)
-
-                    for i in range(len(results_3['subject-object'])):
-                        print('SELECT *', file=queries)
-                        print('WHERE {', file=queries)
-                        for y in results_3['subject-object'][i]:
-                            if y[1] == "M1 M2":
-                                print(y[0] + '.     #' + mapping_names[it1] + ' and ' + mapping_names[it2], file=queries)
-                            if y[1] == "M1":
-                                print(y[0] + '.     #' + mapping_names[it1], file=queries)
-                            if y[1] == "M2":
-                                print(y[0] + '.     #' + mapping_names[it2], file=queries)
-
-                        print('}', file=queries)
-                        print(file=queries)
-
-                    print('===', file=queries)
-
-    print('\t\t}', file=data)
-    print('\t]', file=data)
-    print('}', file=data)
-
-    '''list_ranking = []
-    for time in range(len(ranking[0])):
-        max = 0
-        for i in range(1, len(ranking[0])):
-            if ranking[0][i] > ranking[0][max]:
-                max = i
-        ranking[0][max] = -1
-        list_ranking.append(ranking[1][max])
-    
-    print('Final mappings ranking is:  ' + str(list_ranking), file=data)'''
+                for i in range(len(results_3['subject-object'])):
+                    query = 'SELECT *\nWHERE {\n'
+                    for y in results_3['subject-object'][i]:
+                        if y[1] == "M1 M2":
+                            query += f'{y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                        if y[1] == "M1":
+                            query += f'{y[0]}   # {mapping_names[it1]}'
+                        if y[1] == "M2":
+                            query += f'{y[0]}   # {mapping_names[it2]}'
+                    query += '}'
+                    result['queries'].append(query)
+    return result
