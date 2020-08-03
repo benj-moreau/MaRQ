@@ -41,6 +41,8 @@ def result(request):
         except YAMLError:
             pass
     result = MaRQ.get_results(yarrrml_mappings, mapping_files)
+    # escape \ car
+    queries = json.dumps(result['queries']).replace('\\', '\\\\')
     return render(request, 'result.html',
                   {'result': json.dumps(result['data']),
-                   'queries': json.dumps(result['queries'])})
+                   'queries': queries})

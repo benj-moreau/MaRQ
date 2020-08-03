@@ -1,9 +1,4 @@
-import argparse
 import re
-import pprint
-import sys
-import os
-from yaml import load
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper

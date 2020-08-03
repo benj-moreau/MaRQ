@@ -31,34 +31,29 @@
     <section class="page-section portfolio" id="portfolio">
         <div class="container" id="result">
             {% verbatim %}
-            <div class="form-row">
-                <div class="col-hg-4 ml-5 mt-5 ">
-                    <div class="form-group">
-                        <label for="mapping1">Source</label>
-                        <ul id="mapping1">
-                            <li v-for="mapping in mapping_list">
-                                <button type="button" class="btn btn-primary mb-1" data-toggle="button" v-on:click="clickSource(mapping)">
-                                    {{ mapping }}
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="row">
+                <div class="col">
+                    <select class="form-control" v-model="selected_source_file">
+                        <option v-for="mapping in mapping_list">{{ mapping }}</option>
+                    </select>
                 </div>
-                <div class="col-hg-4 ml-5 mt-5 ">
-                    <div class="form-group">
-                        <label for="mapping2">Destination</label>
-                        <ul id="mapping2">
-                            <li v-for="mapping in mapping_list">
-                                <button type="button" class="btn btn-primary mb-1" data-toggle="button" v-on:click="clickDestination(mapping)">
-                                    {{ mapping }}
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="col">
+                    <select v-show="selected_source_file" class="form-control" v-model="selected_dest_file">
+                        <option v-for="mapping in dest_files">{{ mapping }}</option>
+                    </select>
                 </div>
             </div>
-            <div class="form-row">
-                {{ comparaisons }}
+            <div class="row">
+                <div v-show="selected_dest_file">
+                    {{ selected_comparison }}
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <div v-show="marq_queries">
+                    <div class="row" v-for="query in marq_queries">
+                        <textarea rows="6" cols="50">{{ query }}</textarea>
+                    </div>
+                </div>
             </div>
             {% endverbatim %}
         </div>
@@ -83,6 +78,7 @@
 
     <script>
         let res = JSON.parse('{{ result|safe }}');
+        let queries = JSON.parse('{{ queries|safe }}');
     </script>
     <script src='{% static "js/result.js" %}'></script>
 </body>
