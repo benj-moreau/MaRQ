@@ -37,9 +37,10 @@ def result(request):
         try:
             mapping = load(custom_mapping, Loader=Loader)
             yarrrml_mappings.append(mapping)
+            mapping_files.append(request.POST.get('customMappingFile'))
         except YAMLError:
             pass
-    result = MaRQ.get_results(yarrrml_mappings)
+    result = MaRQ.get_results(yarrrml_mappings, mapping_files)
     return render(request, 'result.html',
                   {'result': json.dumps(result['data']),
                    'queries': json.dumps(result['queries'])})

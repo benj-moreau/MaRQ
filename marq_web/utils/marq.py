@@ -381,15 +381,8 @@ def calcul_score(data):
     return score
 
 
-def get_results(yarrrml_mappings):
+def get_results(yarrrml_mappings, mapping_names):
     result = {'data': [], 'queries': []}
-
-    mapping_names = []
-    for it in range(0, len(yarrrml_mappings)):
-        yarrrml = yarrrml_mappings[it]
-        sources = yarrrml.get('sources')
-        source = sources.get('dataset-source')
-        mapping_names.append(source[0].split('.')[0])
 
     # compare every mapping with every other mappings and print data and results
     for it1 in range(0, len(yarrrml_mappings)):
