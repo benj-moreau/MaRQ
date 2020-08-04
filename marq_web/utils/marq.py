@@ -499,35 +499,35 @@ def get_results(yarrrml_mappings, mapping_names):
                     query = 'SELECT *\nWHERE {\n'
                     for y in results_1['subject-subject'][i]:
                         if y[1] == "M1 M2":
-                            query += f'{y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                            query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
                         if y[1] == "M1":
-                            query += f'{y[0]}   # {mapping_names[it1]}'
+                            query += f' {y[0]}   # {mapping_names[it1]}'
                         if y[1] == "M2":
-                            query += f'{y[0]}   # {mapping_names[it2]}'
-                    query += '}'
+                            query += f' {y[0]}   # {mapping_names[it2]}'
+                    query += '\n}'
                     result['queries'].append(query)
 
                 for i in range(len(results_2['object-object'])):
                     query = 'SELECT *\nWHERE {\n'
                     for y in results_2['object-object'][i]:
                         if y[1] == "M1 M2":
-                            query += f'{y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                            query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
                         if y[1] == "M1":
-                            query += f'{y[0]}   # {mapping_names[it1]}'
+                            query += f' {y[0]}   # {mapping_names[it1]}'
                         if y[1] == "M2":
-                            query += f'{y[0]}   # {mapping_names[it2]}'
-                    query += '}'
+                            query += f' {y[0]}   # {mapping_names[it2]}'
+                    query += '\n}'
                     result['queries'].append(query)
 
                 for i in range(len(results_3['subject-object'])):
                     query = 'SELECT *\nWHERE {\n'
                     for y in results_3['subject-object'][i]:
                         if y[1] == "M1 M2":
-                            query += f'{y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                            query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
                         if y[1] == "M1":
-                            query += f'{y[0]}   # {mapping_names[it1]}'
+                            query += f' {y[0]}   # {mapping_names[it1]}'
                         if y[1] == "M2":
-                            query += f'{y[0]}   # {mapping_names[it2]}'
-                    query += '}'
+                            query += f' {y[0]}   # {mapping_names[it2]}'
+                    query += '\n}'
                     result['queries'].append(query)
     return result

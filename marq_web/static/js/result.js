@@ -118,3 +118,15 @@ var result = new Vue({
         }
     }
 });
+function editor(textarea)
+{
+    CodeMirror.fromTextArea(textarea, {
+        lineNumbers: true
+    });
+}
+let textareas = document.getElementsByTagName("textarea");
+textareas = Array.prototype.slice.call(textareas)
+for(i = 0;i < textareas.length; i++)
+{
+    editor(textareas[i]);
+}

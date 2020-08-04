@@ -14,6 +14,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/codemirror.min.js" integrity="sha512-H5RyE1jRbGn8d0dsSstZi0SSs23X6Hkkf5hLneEIFyCfP/cBwJ/jFJESBuFBiUyzbGZGa06tnrvw1SboRKdwcA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/codemirror.min.css" integrity="sha512-/BlxZbYLtYGExexketXsTi47eHp+r2kTeq2OHecQPZlfbc7WFXVrwbVW9HOYjI6c9Ti+P60ASmVLxittZ0EBGw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/mode/sparql/sparql.min.js" integrity="sha512-nGIvc/3qLsDPJfhOiD8c3nsm0mEqgtnZq3Dgp6bt81dowi8bPj7yzoX7sh5fQ6LU4bjP5HQ+0GGVam9J7eG6Dw==" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href='{% static "css/freelancer.css" %}' rel="stylesheet" type="text/css">
     <!-- VueJs -->
@@ -81,7 +84,8 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <h6>Here is a list of federated queries that could be executed on datasets of the selected RDF mappings.</h6>
+                    <h6>Here is a list of federated queries that could be executed on the set of datasets of selected RDF mappings.</h6>
+                    <h6>Triple patterns are commented with their provenance.</h6>
                 </div>
             </div>
             <div class="row">
