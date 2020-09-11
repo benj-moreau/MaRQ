@@ -38,7 +38,7 @@
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            <h6>In this page, you can see how a specific dataset might benefit from the others datasets of the Web of Data using their RDF mapping.</h6>
+                            <h6>On this page, you can see how a specific dataset might benefit from the others datasets of the Web of Data using their RDF mapping.</h6>
                             <h6>That is, with which datasets, and how, its dataset can be queried.</h6>
                         </div>
                     </div>
@@ -49,11 +49,11 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h6>The idea of this comparison is to see the degree of conjunction or disjunction of two datasets.</h6>
+                            <h6>The idea of this comparison is to see the degree of conjunction or disjunction of a dataset with the others.</h6>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <div>
                                 Select an RDF mapping
                                 <select class="form-control" v-model="selected_source_file">
@@ -61,20 +61,12 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
-                            <div v-show="selected_source_file">
-                                Select another RDF mapping
-                                <select class="form-control" v-model="selected_dest_file">
-                                    <option v-for="mapping in dest_files">{{ mapping }}</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col" v-show="selected_dest_file">
-                    {{ selected_comparison }}
+                <div class="col" v-show="selected_source_file">
+                    <canvas id="chart" style="margin-top: 15px;"></canvas>
                 </div>
             </div>
             <div class="row" style="margin-top: 30px;">
@@ -84,7 +76,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <h6>Here is a list of federated queries that could be executed on the set of datasets of selected RDF mappings.</h6>
+                    <h6>Here is a list of {{marq_queries.length}} federated queries that could be executed on the federation of datasets of selected RDF mappings.</h6>
                     <h6>Triple patterns are commented with their provenance.</h6>
                 </div>
             </div>

@@ -4,22 +4,15 @@ var result = new Vue({
         marq_result: res,
         marq_queries: queries,
         selected_source_file: null,
-        selected_source: {},
-        dest_files: [],
-        selected_dest_file: null,
-        selected_dest: {},
+        selected_source: [],
         sourcesSelected: [],
-        destinationsSelected: [],
         selected_comparison: null
     },
     computed: {
         //marq_results but in decreasing order
         ordered_results: function(){
-            console.log(this.marq_result);
-            console.log(this.marq_queries);
             tempo = this.marq_result["comparaisons"];
             result = [];
-
             while (tempo.length > 0) {
                 max = 0;
                 for (i = 1; i < tempo.length; i++) {
@@ -38,7 +31,7 @@ var result = new Vue({
             tempo = this.marq_result;
             result = [tempo[0]["Source"]];
 
-            it = 0
+            it = 0;
             while (tempo[it]["Source"] === tempo[0]["Source"] && it < tempo.length){
                 result.push(tempo[it]["Destination"]);
                 it = it + 1
@@ -46,32 +39,6 @@ var result = new Vue({
 
             return result
         },
-
-        comparaisons: function(){
-            tempo = this.marq_result;
-            result = [];
-            for (i = 0; i < tempo.length; i++) {
-                if( this.sourcesSelected.length && this.destinationsSelected.length ){
-                    //if both variable aren't empty
-                    if( this.sourcesSelected.indexOf(tempo[i]["Source"]) !== -1 && this.destinationsSelected.indexOf(tempo[i]["Destination"]) !== -1 ){
-                        result.push(tempo[i])
-                    }
-                } else if( this.sourcesSelected.length){
-                    //if only destinations is empty
-                    if( this.sourcesSelected.indexOf(tempo[i]["Source"]) !== -1 ){
-                        result.push(tempo[i])
-                    }
-                } else if( this.destinationsSelected.length ){
-                    //if only sourcesSelected is empty
-                    if( this.destinationsSelected.indexOf(tempo[i]["Destination"]) !== -1 ){
-                        result.push(tempo[i])
-                    }
-                }
-            }
-
-            return result
-        }
-
     },
     methods: {
         clickSource: function (mapping){
@@ -82,42 +49,71 @@ var result = new Vue({
                 this.sourcesSelected.splice(ind,1)
             }
         },
-
-        clickDestination: function (mapping){
-            ind = this.destinationsSelected.indexOf(mapping);
-            if(ind === -1){
-                this.destinationsSelected.push(mapping)
-            } else {
-                this.destinationsSelected.splice(ind,1)
-            }
-        }
-
     },
     watch: {
         selected_source_file: function (val) {
+            let labels = [];
+            let ss = {
+                label: 'Subject - Subject',
+                data: [],
+                backgroundColor: 'rgba(0, 134, 214, 0.6)',
+                hoverBackgroundColor: 'rgba(0, 134, 214, 0.7)',
+                borderColor: 'rgba(0, 134, 214, 1)'
+            };
+            let oo = {
+                label: 'Object - Object',
+                data: [],
+                backgroundColor: 'rgba(239, 183, 26, 0.6)',
+                hoverBackgroundColor: 'rgba(239, 183, 26, 0.7)',
+                borderColor: 'rgba(239, 183, 26, 1)'
+            };
+            let so = {
+                label: 'Subject - Object',
+                data: [],
+                backgroundColor: 'rgba(184, 0, 49, 0.6)',
+                hoverBackgroundColor: 'rgba(184, 0, 49, 0.7)',
+                borderColor: 'rgba(184, 0, 49, 1)'
+            };
+            // update_selected_source
             this.selected_source = [];
-            this.dest_files = [];
-            this.selected_dest_file = null;
             for (const comparison of this.marq_result){
                 if (comparison.Source === val) {
-                    this.selected_source.push(comparison)
+                    this.selected_source.push(comparison);
+                    //add to chart dataset vars
+                    labels.push(comparison.Destination);
+                    ss.data.push(comparison.Join_subject_subject.Number_of_triple_pattern_from_M2);
+                    so.data.push(comparison.Join_subject_object.Number_of_triple_pattern_from_M2);
+                    oo.data.push(comparison.Join_object_object.Number_of_triple_pattern_from_M2);
                 }
             }
-            for (const comparison of this.selected_source){
-                if (comparison.Destination !== val) {
-                    this.dest_files.push(comparison.Destination)
+            // update chart
+            myChart.destroy();
+            myChart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [ss, so, oo]
+                },
+                options: {
+                    legend: {
+                        position: 'right'
+                    },
+                    scales: {
+                        xAxes: [{ stacked: true }],
+                        yAxes: [{ stacked: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Number of joins'
+                                }
+                        }]
+                    }
                 }
-            }
+            });
         },
-        selected_dest_file: function (val) {
-            for (const comparison of this.selected_source){
-                if (comparison.Destination === val) {
-                    this.selected_comparison = comparison;
-                }
-            }
-        }
     }
 });
+/*
+// TOO SLOW !
 function editor(textarea)
 {
     CodeMirror.fromTextArea(textarea, {
@@ -125,8 +121,12 @@ function editor(textarea)
     });
 }
 let textareas = document.getElementsByTagName("textarea");
-textareas = Array.prototype.slice.call(textareas)
+textareas = Array.prototype.slice.call(textareas);
 for(i = 0;i < textareas.length; i++)
 {
-    editor(textareas[i]);
+    //editor(textareas[i]);
 }
+*/
+
+let canvas = document.getElementById('chart');
+let myChart = new Chart(canvas, {});
