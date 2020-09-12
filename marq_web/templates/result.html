@@ -82,10 +82,10 @@
             </div>
             <div class="row">
                 <div class="col" v-show="marq_queries">
-                    <div class="row" v-for="query in marq_queries">
-                        <div class="col d-flex justify-content-center">
-                            <textarea rows="6" cols="50">{{ query }}</textarea>
-                        </div>
+                    <div class="col d-flex justify-content-center">
+                        <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 50px;margin-top: 50px;margin-right: 10px;" v-on:click="ind_query = (ind_query === 0) ? marq_queries.length - 1 : ind_query - 1">&laquo;</button>
+                        <textarea rows="6" cols="50" id="textarea">{{ marq_queries[ind_query] }}</textarea>
+                        <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 50px;margin-top: 50px;margin-left: 10px;" v-on:click="ind_query = (ind_query === marq_queries.length - 1) ? 0 : ind_query + 1">&raquo;</button>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@ var result = new Vue({
     data: {
         marq_result: res,
         marq_queries: queries,
+        ind_query: 0,
         selected_source_file: null,
         selected_source: [],
         sourcesSelected: [],
@@ -110,23 +111,17 @@ var result = new Vue({
                 }
             });
         },
+        ind_query: function () {
+            editor.setValue(this.marq_queries[this.ind_query]);
+        }
     }
 });
-/*
-// TOO SLOW !
-function editor(textarea)
-{
-    CodeMirror.fromTextArea(textarea, {
-        lineNumbers: true
-    });
-}
-let textareas = document.getElementsByTagName("textarea");
-textareas = Array.prototype.slice.call(textareas);
-for(i = 0;i < textareas.length; i++)
-{
-    //editor(textareas[i]);
-}
-*/
+
+
+let textarea = document.getElementById("textarea");
+let editor = CodeMirror.fromTextArea(textarea, {
+    lineNumbers: true
+});
 
 let canvas = document.getElementById('chart');
 let myChart = new Chart(canvas, {});
