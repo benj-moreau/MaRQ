@@ -1,4 +1,4 @@
 django>=2.2.13
 PyYAML>=5.3.1
 gunicorn
-whitenoise==3.3.1
+whitenoise
