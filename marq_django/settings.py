@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')16fv=sm3(8b*%0efqggx$1awd!sh+8%@yihb9u&n*ke9@gz!v'
+SECRET_KEY = 'SECRET_KEY IN LOCAL_SETTINGS.PY'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'marq.priloo.univ-nantes.fr', 'marq.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'marq-priloo.univ-nantes.fr']
 
 
 # Application definition
@@ -112,7 +112,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
-#STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 #STATIC_ROOT = 'marq_web/'
 STATIC_URL = '/static/'
 
@@ -121,9 +121,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'marq_web/static'),
     os.path.join(PROJECT_ROOT, 'static'),
 )
-#STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 try:
-    from local_settings import *
+    from .local_settings import *
 except ImportError:
     pass
