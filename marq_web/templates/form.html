@@ -52,22 +52,23 @@
                     </div>
                     <div class="row justify-content-md-center">
                         <div class="col-sm">
-                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="-webkit-transform: scaleX(-1);transform: scaleX(-1) rotate(0deg);" class="img-responsive float-right">
+                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: scaleX(-1) rotate(0deg);" class="img-responsive float-right">
                         </div>
                         <div class="col-sm"></div>
                         <div class="col-sm">
-                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: rotate(-40deg)" class="img-responsive float-left">
+                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: scaleX(-1) rotate(-55deg)" class="img-responsive float-left">
                         </div>
                     </div>
 
                     {% verbatim %}
-                    <div class="row justify-content-md-center">
-                        <div class="col-md-auto">
+                    <div class="row">
+                        <div class="col-md"></div>
+                        <div class="col-md-5">
                             <select name="mappingFiles" multiple class="selectpicker" id="mappingFiles">
                                 <option v-for="mapping in mappings">{{ mapping }}</option>
                             </select>
                         </div>
-                        <div class="col-md-auto">
+                        <div class="col-md-5">
                             <input type="file" style="display: none;" id="customMappingsFiles" name="customMappingsFiles" @change="addCustomFile" multiple>
                             <input type="button" value="Browse..." onclick="document.getElementById('customMappingsFiles').click();">
                             <textarea v-show="false" type="hidden" name="customMappings" id="customMappings"></textarea>
