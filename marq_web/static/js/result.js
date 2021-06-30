@@ -50,6 +50,27 @@ var result = new Vue({
                 this.sourcesSelected.splice(ind,1)
             }
         },
+        downloadQueries: function (){
+            let wnd = window.open('about:blank', '', '_blank');
+            let pair_already_seen = new Set();
+            let already_done = false;
+            queries.forEach( query => {
+                already_done = false;
+
+                lines = splitLines(query);
+                let mapping_pair = (lines[1].slice(5), lines[2].slice(5))
+                let reverse_pair = (lines[2].slice(5), lines[1].slice(5))
+                pair_already_seen.add(mapping_pair);
+
+                //if the reverse pair was already done, then the subject-subject queries and object-object queries are already done
+                if ((pair_already_seen.has(reverse_pair)) && ( lines[0] == "#subject-subject" || lines[0] == "#object-object" )) {
+                    already_done = true;
+                }
+                if (!already_done) {
+                    wnd.document.write('<pre>' + escapeHtml(query) + '</pre>' + '</br>');
+                }
+            });
+        }
     },
     watch: {
         selected_source_file: function (val) {
@@ -82,9 +103,23 @@ var result = new Vue({
                     this.selected_source.push(comparison);
                     //add to chart dataset vars
                     labels.push(comparison.Destination);
-                    ss.data.push(comparison.Join_subject_subject.Number_of_triple_pattern_from_M2);
-                    so.data.push(comparison.Join_subject_object.Number_of_triple_pattern_from_M2);
-                    oo.data.push(comparison.Join_object_object.Number_of_triple_pattern_from_M2);
+                    tempo = 0;
+                    comparison.Join_subject_subject.Number_of_triple_pattern.forEach( number_of_pattern_for_one_join =>
+                        tempo += number_of_pattern_for_one_join
+                    );
+                    ss.data.push(tempo);
+
+                    tempo = 0;
+                    comparison.Join_object_object.Number_of_triple_pattern.forEach( number_of_pattern_for_one_join =>
+                        tempo += number_of_pattern_for_one_join
+                    );
+                    oo.data.push(tempo);
+
+                    tempo = 0;
+                    comparison.Join_subject_object.Number_of_triple_pattern.forEach( number_of_pattern_for_one_join =>
+                        tempo += number_of_pattern_for_one_join
+                    );
+                    so.data.push(tempo);
                 }
             }
             // update chart
@@ -117,6 +152,24 @@ var result = new Vue({
     }
 });
 
+let entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+
+function escapeHtml (string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
+const splitLines = str => str.split(/\r?\n/);
 
 let textarea = document.getElementById("textarea");
 let editor = CodeMirror.fromTextArea(textarea, {

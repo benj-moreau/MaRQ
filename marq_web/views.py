@@ -32,17 +32,20 @@ def result(request):
     for mapping_file in mapping_files:
         path = f'{MAPPINGS_PATH}{mapping_file}'
         yarrrml_mappings.append(load(open(path), Loader=Loader))
-    custom_mapping = request.POST.get('customMapping')
-    if custom_mapping:
-        try:
+    custom_mappings = request.POST.get('customMappings').split('||')
+    del custom_mappings[0]
+    try:
+        for custom_mapping in custom_mappings:
             mapping = load(custom_mapping, Loader=Loader)
             yarrrml_mappings.append(mapping)
-            mapping_files.append(request.POST.get('customMappingFile'))
-        except YAMLError:
-            pass
-    result = MaRQ.get_results(yarrrml_mappings, mapping_files)
+        mapping_names = request.POST.get('customMappingsNames').split('||')
+        for name in mapping_names[1:]:
+            mapping_files.append(name)
+    except YAMLError:
+        pass
+    results = MaRQ.get_results(yarrrml_mappings, mapping_files)
     # escape \ car
-    queries = json.dumps(result['queries']).replace('\\', '\\\\')
+    queries = json.dumps(results['queries']).replace('\\', '\\\\')
     return render(request, 'result.html',
-                  {'result': json.dumps(result['data']),
+                  {'result': json.dumps(results['data']),
                    'queries': queries})

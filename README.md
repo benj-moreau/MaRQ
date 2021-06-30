@@ -1,6 +1,8 @@
 # MaRQ
 MaRQ generates federated SPARQL queries from RDF mappings
 
+This repositery is a copy of Benjamin Moreau's: https://github.com/benj-moreau/MaRQ But with my additions
+
 ## Installation
 Installation in a `virtualenv` is recommended.
 

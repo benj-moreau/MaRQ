@@ -59,6 +59,7 @@
                             <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: rotate(-40deg)" class="img-responsive float-left">
                         </div>
                     </div>
+
                     {% verbatim %}
                     <div class="row justify-content-md-center">
                         <div class="col-md-auto">
@@ -67,14 +68,19 @@
                             </select>
                         </div>
                         <div class="col-md-auto">
-                            <div class="custom-file">
-                                <label class="custom-file-label" for="customMappingFile" id="fileLabel">Upload a YARRRML file</label>
-                                <input type="file" class="custom-file-input" id="customMappingFile" name="customMappingFile" @change="addFile($event)">
-                                <textarea v-show="false" type="hidden" name="customMapping" id="customMapping"></textarea>
-                            </div>
+                            <input type="file" style="display: none;" id="customMappingsFiles" name="customMappingsFiles" @change="addCustomFile" multiple>
+                            <input type="button" value="Browse..." onclick="document.getElementById('customMappingsFiles').click();">
+                            <textarea v-show="false" type="hidden" name="customMappings" id="customMappings"></textarea>
+                            <textarea v-show="true" type="hidden" name="customMappingsNames" id="customMappingsNames"></textarea>
+                            <ul>
+                                <li v-for="(customMapping, index) in customMappings">
+                                    {{ customMapping.file.name }} &nbsp &nbsp <span @click="deleteCustomMapping(index)" class="fa fa-trash" style="font-size: 15px"/>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     {% endverbatim %}
+
                 </div>
 
                 <!-- evaluate -->

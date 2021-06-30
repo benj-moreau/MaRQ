@@ -2,18 +2,34 @@ var form = new Vue({
     el: '#form',
     data: {
         mappings: mapping_files,
+        customMappings: [],
     },
     methods: {
-        addFile(event) {
-            document.getElementById("fileLabel").innerHTML = event.target.files[0].name;
-            var file = document.getElementById('customMappingFile');
-            if(file.files.length){
+        addCustomFile(event) {
+            Array.from(event.target.files).forEach(mapping => {
+                this.customMappings.push({file: mapping, delete:'(x)'});
+                $("#customMappingsNames").val( $("#customMappingsNames").val() + "||" + mapping.name);
                 var reader = new FileReader();
                 reader.onload = function(e) {
-                    $("#customMapping").val(e.target.result);
+                    $("#customMappings").val( $("#customMappings").val() + "||" + e.target.result);
                 };
-                reader.readAsBinaryString(file.files[0]);
-            }
+                reader.readAsBinaryString(mapping);
+            });
+        },
+
+        deleteCustomMapping: function(index){
+            this.customMappings.splice(index, 1);
+
+            $("#customMappings").val("")
+            $("#customMappingsNames").val("")
+            this.customMappings.forEach(mapping => {
+                $("#customMappingsNames").val( $("#customMappingsNames").val() + "||" + mapping.name);
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#customMappings").val( $("#customMappings").val() + "||" + e.target.result);
+                };
+                reader.readAsBinaryString(mapping.file);
+            });
         }
 }
 });
