@@ -71,7 +71,7 @@
                             <input type="file" style="display: none;" id="customMappingsFiles" name="customMappingsFiles" @change="addCustomFile" multiple>
                             <input type="button" value="Browse..." onclick="document.getElementById('customMappingsFiles').click();">
                             <textarea v-show="false" type="hidden" name="customMappings" id="customMappings"></textarea>
-                            <textarea v-show="true" type="hidden" name="customMappingsNames" id="customMappingsNames"></textarea>
+                            <textarea v-show="false" type="hidden" name="customMappingsNames" id="customMappingsNames"></textarea>
                             <ul>
                                 <li v-for="(customMapping, index) in customMappings">
                                     {{ customMapping.file.name }} &nbsp &nbsp <span @click="deleteCustomMapping(index)" class="fa fa-trash" style="font-size: 15px"/>
