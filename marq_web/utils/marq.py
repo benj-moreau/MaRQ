@@ -112,8 +112,6 @@ def joinable(predicates1, predicates2, objects1, objects2):
 
 # return the triple patterns created with Subject-Subject joins
 def S2S_joinDetection(yarrrml1, yarrrml2):
-    #print('S2S')
-    #test_bgp = 0
 
     bgp = []
     list_tp_per_template_count = []
@@ -196,8 +194,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                                  'object':     '?O' + str(id_object),
                                  'source':     source})
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', subject1, ' et ', subject2)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
@@ -209,9 +205,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
 # return the triple patterns created with Object-Object joins
 def O2O_joinDetection(yarrrml1, yarrrml2):
-
-    #print('O2O')
-    #test_bgp = 0
 
     bgp = []
     list_tp_per_template_count = []
@@ -297,8 +290,6 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                                  'object':     '?O' + str(id_object),
                                  'source':     source})
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', object1, ' et ', object2)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
@@ -311,9 +302,6 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 # return the triple patterns created with Subject-Object joins
 # reversed act as the mappings are inverted, changing the 'source' variable, thus allowing to do Object-Subject joins
 def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
-
-    #print('S2O')
-    #test_bgp = 0
 
     bgp = []
     list_tp_per_template_count = []
@@ -398,8 +386,6 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                          'object':     '?T' + str(id_template),
                          'source':     source})
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', subject, ' et ', object)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 

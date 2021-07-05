@@ -139,7 +139,7 @@ var result = new Vue({
                         yAxes: [{ stacked: true,
                                 scaleLabel: {
                                     display: true,
-                                    labelString: 'Number of joins'
+                                    labelString: 'Number of triple patterns found'
                                 }
                         }]
                     }
