@@ -52,6 +52,8 @@ var result = new Vue({
         },
         downloadQueries: function (){
             let wnd = window.open('about:blank', '', '_blank');
+            wnd.document.write('<pre>### This file contains queries deduced by the MaRQ tool available at https://github.com/Manoe-K/MaRQ</pre></br>')
+
             let pair_already_seen = new Set();
             let already_done = false;
             queries.forEach( query => {
@@ -63,7 +65,7 @@ var result = new Vue({
                 pair_already_seen.add(mapping_pair);
 
                 //if the reverse pair was already done, then the subject-subject queries and object-object queries are already done
-                if ((pair_already_seen.has(reverse_pair)) && ( lines[0] == "#subject-subject" || lines[0] == "#object-object" )) {
+                if ((pair_already_seen.has(reverse_pair)) && ( lines[0] == "###subject-subject" || lines[0] == "###object-object" )) {
                     already_done = true;
                 }
                 if (!already_done) {
