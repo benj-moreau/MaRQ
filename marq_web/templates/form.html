@@ -52,29 +52,36 @@
                     </div>
                     <div class="row justify-content-md-center">
                         <div class="col-sm">
-                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="-webkit-transform: scaleX(-1);transform: scaleX(-1) rotate(0deg);" class="img-responsive float-right">
+                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: scaleX(-1) rotate(0deg);" class="img-responsive float-right">
                         </div>
                         <div class="col-sm"></div>
                         <div class="col-sm">
-                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: rotate(-40deg)" class="img-responsive float-left">
+                            <img src='{% static "img/arrow.png" %}' alt="ls2n logo" height="50" style="transform: scaleX(-1) rotate(-55deg)" class="img-responsive float-left">
                         </div>
                     </div>
+
                     {% verbatim %}
-                    <div class="row justify-content-md-center">
-                        <div class="col-md-auto">
+                    <div class="row">
+                        <div class="col-md"></div>
+                        <div class="col-md-5">
                             <select name="mappingFiles" multiple class="selectpicker" id="mappingFiles">
                                 <option v-for="mapping in mappings">{{ mapping }}</option>
                             </select>
                         </div>
-                        <div class="col-md-auto">
-                            <div class="custom-file">
-                                <label class="custom-file-label" for="customMappingFile" id="fileLabel">Upload a YARRRML file</label>
-                                <input type="file" class="custom-file-input" id="customMappingFile" name="customMappingFile" @change="addFile($event)">
-                                <textarea v-show="false" type="hidden" name="customMapping" id="customMapping"></textarea>
-                            </div>
+                        <div class="col-md-5">
+                            <input type="file" style="display: none;" id="customMappingsFiles" name="customMappingsFiles" @change="addCustomFile" multiple>
+                            <input type="button" value="Browse..." onclick="document.getElementById('customMappingsFiles').click();">
+                            <textarea v-show="false" type="hidden" name="customMappings" id="customMappings"></textarea>
+                            <textarea v-show="false" type="hidden" name="customMappingsNames" id="customMappingsNames"></textarea>
+                            <ul>
+                                <li v-for="(customMapping, index) in customMappings">
+                                    {{ customMapping.file.name }} &nbsp &nbsp <span @click="deleteCustomMapping(index)" class="fa fa-trash" style="font-size: 15px"/>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     {% endverbatim %}
+
                 </div>
 
                 <!-- evaluate -->
@@ -93,7 +100,7 @@
                         <img src='{% static "img/logo-ls2n.png" %}' alt="ls2n logo" height="50">
                     </div>
                     <div class="col-sm">
-                        <small>This site is available on <a href="https://github.com/benjimor/MaRQ">GitHub</a> under MIT license</small>
+                        <small>This site is available on <a href="https://github.com/Manoe-K/MaRQ-1">GitHub</a> under MIT license</small>
                     </div>
                     <div class="col-sm">
                         <img src='{% static "img/ods-logo.png" %}' alt="ods logo" height="30">

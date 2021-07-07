@@ -1,4 +1,5 @@
-import re
+import sys
+from yaml import load
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -13,11 +14,6 @@ YARRRML_KEYS = {
     'value': ['value', 'v']
 }
 
-IGNORED_PROPERTIES = ['http://www.w3.org/2000/01/rdf-schema#label', ' https://schema.org/name', 'http://www.w3.org/2004/02/skos/core#prefLabel']
-IGNORED_CLASSES = ['https://schema.org/Thing']
-
-REF_REGEX = re.compile(r'(\$\(.+?\))')
-
 
 def get_keys(d, key):
     # Get the value of the first key in corresponding YARRRML_KEYS that match a key in d
@@ -28,506 +24,469 @@ def get_keys(d, key):
     return {}
 
 
-def get_generic_template(template):
-    generic_template = template
-    references = {}
-    for index, reference in enumerate(REF_REGEX.findall(template), start=1):
-        generic_reference = f'$(field{index})'
-        generic_template = generic_template.replace(reference, generic_reference)
-        references[generic_reference] = reference
-    return references, generic_template
-
-
-def get_classes_properties_references(mapping):
-    classes = []
-    properties = []
-    references = []
-    predicate_objects = get_keys(mapping, 'predicateobjects')
-    for predicate_object in predicate_objects:
-        # for each predicate object (list) in mapping
-        if predicate_object[0] == 'a' \
-                or predicate_object[0] == 'rdf:type' \
-                or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-            classes.append(predicate_object[1])
-        else:
-            properties.append(predicate_object[0])
-            references.append(predicate_object[1])
-    return references, classes, properties
-
-
-def get_templates(yarrrml):
-    template_list = {'templates': {}}
-    # get  yarrrml key of the yarrrml file
+# Return all of the subject templates of a mapping
+def get_subjects(yarrrml):
     mappings = get_keys(yarrrml, 'mappings')
+
+    subjects = set()
     for mapping_name, mapping in mappings.items():
-        # for each mapping
-        references, classes, properties = get_classes_properties_references(mapping)
-        references, generic_template = get_generic_template(mapping['subject'])
-        template_list['templates'][generic_template] = {
-            'classes': classes,  # classes associated to this template (if subject)
-            'properties': properties,  # properties associated to this template
-            'references': references}
+        subjects.add(get_keys(yarrrml, 'mappings')[mapping_name]['subject'])
 
-    return template_list
+    return subjects
 
 
+# Return all of the object templates of a mapping
 def get_objects(yarrrml):
-    # get  yarrrml key of the yarrrml file
     mappings = get_keys(yarrrml, 'mappings')
 
-    is_url = re.compile(r'\Ahttp')
-
-    object_list = []
-    properties_list = []
+    names = set()
     for mapping_name, mapping in mappings.items():
-        for predicate_object in get_keys(mapping, 'predicateobjects'):
-            # add a new object only if it wasn't already listed
+        names.add(mapping_name)
 
-            found = False
-            ite = 0
-            reference, generic_template = get_generic_template(predicate_object[1])
+    objects = set()
+    for mapping_name, mapping in mappings.items():
+        predicate_objects = get_keys(mapping, 'predicateobjects')
+        for predicate_object in predicate_objects:
+            if predicate_object[1] in names:     # If object is a reference, we use the subject it refers to
+                objects.add(mappings[predicate_object[1]]['subject'])
+            else:
+                objects.add(predicate_object[1])
 
-            while ite < len(object_list) and not found:
-                if object_list[ite] == generic_template:
-                    found = True
-                else:
-                    ite = ite + 1
-
-            if ite == len(object_list):
-                if is_url.match(predicate_object[1]) is not None:
-                    # if the object is an url, change it to match a generic template
-                    object_list.append(generic_template)
-                else:
-                    # if the object is a constant
-                    object_list.append(predicate_object[1])
-                properties_list.append(set())
-
-            properties_list[ite].add(predicate_object[0])
-
-    return object_list, properties_list
+    return objects
 
 
-def get_properties(yarrrml):
-    properties_list = {'properties': {}}
-    # get  yarrrml key of the yarrrml file
+# Return all of the predicate of a mapping in relation to a given subject
+def get_triplets_of_subject(yarrrml, subject_to_search_with):
     mappings = get_keys(yarrrml, 'mappings')
+
+    predicates = []
+    objects = []
     for mapping_name, mapping in mappings.items():
-        references, classes, properties = get_classes_properties_references(mapping)
-        references1, generic_template = get_generic_template(mapping['subject'])
-        for i in range(len(properties)):
-            properties_list['properties'][properties[i]] = {
-                'classes': classes,     # classes associated to this template (if subject)
-                'templates': generic_template,
-                'references_templates': references1,
-                'references': references[i],
-                'mapping_name': mapping_name
-            }
-
-    return properties_list
+        if subject_to_search_with == mappings[mapping_name]['subject']:
+            predicate_objects = get_keys(mapping, 'predicateobjects')
+            for predicate_object in predicate_objects:
+                predicates.append(predicate_object[0])
+                objects.append(predicate_object[1])
+    return predicates, objects
 
 
-def get_join_subject_subject(yarrrml1, yarrrml2):
-    # keep track of the number of subject shared in order to name them differently
+# Return all of the predicate of a mapping in relation to a given object
+def get_triplets_of_object(yarrrml, object_to_search_with):
+    mappings = get_keys(yarrrml, 'mappings')
+
+    names = set()
+    for mapping_name, mapping in mappings.items():
+        names.add(mapping_name)
+
+    predicates = []
+    subjects = []
+    for mapping_name, mapping in mappings.items():
+        predicate_objects = get_keys(mapping, 'predicateobjects')
+        for predicate_object in predicate_objects:
+            if predicate_object[1] in names:     # If object is a reference to a subject, we use the subject it refers to
+                if object_to_search_with == mappings[predicate_object[1]]['subject']:
+                    predicates.append(predicate_object[0])
+                    subjects.append(mapping['subject'])
+            else:
+                if object_to_search_with == predicate_object[1]:
+                    predicates.append(predicate_object[0])
+                    subjects.append(mapping['subject'])
+    return predicates, subjects
+
+
+# attention la saturation crée trop de faux positif (car thing == thing)
+def joinable(predicates1, predicates2, objects1, objects2):
+
+    set1 = set()
+    set2 = set()
+    for i in range(len(objects1)):
+        if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
+            set1.add(objects1[i])
+    for i in range(len(objects2)):
+        if predicates2[i] == 'a' or predicates2[i] == 'rdf:type':
+            set2.add(objects2[i])
+    Jaccard = len(set1.intersection(set2))/len(set1.union(set2))
+
+    return Jaccard >= 0.2
+
+
+# return the triple patterns created with Subject-Subject joins
+def S2S_joinDetection(yarrrml1, yarrrml2):
+
+    bgp = []
+    list_tp_per_template_count = []
+    tp_M1_count = 0
+    tp_M2_count = 0
+
     id_subject = 0
-    # keep track of the number of object in order to name them differently
-    id_object = 0
-    # keep track of the size of each bgp
-    data = []
 
-    join_subject_subject = []
+    for subject1 in get_subjects(yarrrml1):
+        for subject2 in get_subjects(yarrrml2):
 
-    # for subject in both subject(mapping1) and subject(mapping2)
-    for subject1, information1 in (get_templates(yarrrml1)['templates']).items():
-        for subject2, information2 in (get_templates(yarrrml2)['templates']).items():
-            if subject1 == subject2:
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2)
 
-                triple_patterns = []
-                count_pattern = 0
+            if subject1 == subject2 or joinable(predicates1, predicates2, objects1, objects2):
                 id_subject = id_subject + 1
-
-                for propertie1 in information1['properties']:
-                    if propertie1 in information2['properties']:
-                        provenance = 'M1 M2'
-                    else:
-                        provenance = 'M1'
-                    id_object = id_object + 1
-                    # the propertie a doesn't require < >
-                    if propertie1 == 'a':
-                        triple_patterns.append(['?S' + str(id_subject) + ' ' + propertie1 + ' ' + '?O' + str(id_object), provenance])
-                    else:
-                        triple_patterns.append(['?S' + str(id_subject) + ' <' + propertie1 + '> ' + '?O' + str(id_object), provenance])
-                    count_pattern = count_pattern + 1
-
-                for propertie2 in information2['properties']:
-                    if propertie2 not in information1['properties']:
-                        provenance = 'M2'
-                        id_object = id_object + 1
-                        # the propertie a doesn't require < >
-                        if propertie2 == 'a':
-                            triple_patterns.append(['?S' + str(id_subject) + ' ' + propertie2 + ' ' + '?O' + str(id_object), provenance])
-                        else:
-                            triple_patterns.append(['?S' + str(id_subject) + ' <' + propertie2 + '> ' + '?O' + str(id_object), provenance])
-                        count_pattern = count_pattern + 1
-
-                for class1 in information1['classes']:
-                    if class1 in information2['classes']:
-                        provenance = 'M1 M2'
-                    else:
-                        provenance = 'M1'
-                    triple_patterns.append(['?S' + str(id_subject) + ' a <' + class1 + '>', provenance])
-                    count_pattern = count_pattern + 1
-
-                for class2 in information2['classes']:
-                    if class2 not in information1['classes']:
-                        provenance = 'M2'
-                        triple_patterns.append(['?S' + str(id_subject) + ' a <' + class2 + '>', provenance])
-                        count_pattern = count_pattern + 1
-
-                if triple_patterns:
-
-                    # print('Subject: ', information1['references']['$(field1)'], ' == ', information2['references']['$(field1)'])
-
-                    join_subject_subject.append(triple_patterns)
-                    data.append(count_pattern)
-
-    return [id_subject, data], {'subject-subject': join_subject_subject}
-
-
-def get_join_object_object(yarrrml1, yarrrml2):
-    # keep track of the number of object shared in order to name them differently
-    id_object = 0
-    # keep track of the number of subject in order to name them differently
-    id_subject = 0
-    # and count the total size of each bgp
-    data = []
-
-    join_object_object = []
-
-    objects1, properties_list1 = get_objects(yarrrml1)
-    objects2, properties_list2 = get_objects(yarrrml2)
-
-    # for subject in both subject(mapping1) and subject(mapping2)
-    for i in range(len(objects1)):
-        for y in range(len(objects2)):
-            if objects1[i] == objects2[y]:
-
+                id_object = 0
                 triple_patterns = []
-                count_pattern = 0
-                id_object = id_object + 1
+                tp_per_template_count = 0
 
-                for propertie1 in properties_list1[i]:
-                    if propertie1 in properties_list2[y]:
-                        provenance = 'M1 M2'
-                    else:
-                        provenance = 'M1'
-                    id_subject = id_subject + 1
-                    # the propertie a doesn't require < >
-                    if propertie1 == 'a':
-                        triple_patterns.append(['?S' + str(id_subject) + ' ' + propertie1 + ' <' + objects1[i] + '>', provenance])
-                    else:
-                        if propertie1 == 'rdf:type':
-                            triple_patterns.append(['?S' + str(id_subject) + ' <' + propertie1 + '> <' + objects1[i] + '>', provenance])
-                        else:
-                            triple_patterns.append(['?S' + str(id_subject) + ' <' + propertie1 + '> ?O' + str(id_object), provenance])
-                    count_pattern = count_pattern + 1
-
-                for propertie2 in properties_list2[y]:
-                    if propertie2 not in properties_list1[i]:
-                        provenance = 'M2'
-                        id_subject = id_subject + 1
-                        # the propertie a doesn't require < >
-                        if propertie2 == 'a':
-                            triple_patterns.append(['?S' + str(id_subject) + ' ' + propertie2 + ' <' + objects2[y] + '>', provenance])
-                        else:
-                            if propertie2 == 'rdf:type':
-                                triple_patterns.append(['?S' + str(id_subject) + ' <' + propertie2 + '> <' + objects2[y] + '>', provenance])
+                for i in range(len(predicates1)):
+                    if predicates1[i] in predicates2:
+                        if predicates1[i] == 'a' or predicates1[i] == 'rdf:thing':
+                            if objects1[i] in objects2:
+                                source = 'M1 M2'
                             else:
-                                triple_patterns.append(['?S' + str(id_subject) + ' <' + propertie2 + '> ?O' + str(id_object), provenance])
+                                source = 'M1'
+                                tp_M1_count += 1
+                        else:
+                            source = 'M1 M2'
+                    else:
+                        source = 'M1'
+                        tp_M1_count += 1
 
-                        count_pattern = count_pattern + 1
+                    tp_per_template_count += 1
 
-                if triple_patterns:
+                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
+                        triple_patterns.append(
+                            {'subject':    '?s' + str(id_subject),
+                             'predicate':  'rdf:type',
+                             'object':     objects1[i],
+                             'source':     source})
+                    else:
+                        id_object = id_object+1
+                        triple_patterns.append(
+                            {'subject':    '?s' + str(id_subject),
+                             'predicate':  str(predicates1[i]),
+                             'object':     '?o' + str(id_object),
+                             'source':     source})
 
-                    # print('Object: ', objects1[i], ' == ', objects2[y])
+                for i in range(len(predicates2)):
 
-                    join_object_object.append(triple_patterns)
-                    data.append(count_pattern)
+                    #test if the (predicate, object) pair wasn't already used from the other mapping
+                    used_pair = False
+                    for j in range(len(predicates1)):
+                        #if we have a common predicate that don't refer to a type object
+                        if predicates2[i] == predicates1[j] and not (predicates2[i] == 'a' or predicates2[i] == 'rdf:type'):
+                            used_pair = True
+                        #if we have a common predicate and a common subject
+                        elif predicates2[i] == predicates1[j] and objects2[i] == objects1[j]:
+                            used_pair = True
 
-    return [id_object, data], {'object-object': join_object_object}
+                    if not used_pair:
+                        source = 'M2'
+                        tp_M2_count += 1
+
+                        tp_per_template_count += 1
+
+                        if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
+                            triple_patterns.append(
+                                {'subject':    '?s' + str(id_subject),
+                                 'predicate':  'rdf:type',
+                                 'object':     objects2[i],
+                                 'source':     source})
+                        else:
+                            id_object = id_object+1
+                            triple_patterns.append(
+                                {'subject':    '?s' + str(id_subject),
+                                 'predicate':  str(predicates2[i]),
+                                 'object':     '?o' + str(id_object),
+                                 'source':     source})
+
+                list_tp_per_template_count.append(tp_per_template_count)
+                bgp.append(triple_patterns)
+
+    return {'triple_patterns': bgp,
+            'Number_of_triple_patterns': list_tp_per_template_count,
+            'Number_of_triple_patterns_from_M1': tp_M1_count,
+            'Number_of_triple_patterns_from_M2': tp_M2_count}
 
 
-def get_join_subject_object(yarrrml1, yarrrml2):
-    # keep track of the number of template (subject-object) shared in order to name them differently
+# return the triple patterns created with Object-Object joins
+def O2O_joinDetection(yarrrml1, yarrrml2):
+
+    bgp = []
+    list_tp_per_template_count = []
+    tp_M1_count = 0
+    tp_M2_count = 0
+
+    id_object = 0
+
+    for object1 in get_objects(yarrrml1):
+        for object2 in get_objects(yarrrml2):
+
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, object1)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object2)
+
+            join = False
+            if predicates1 and predicates2:
+                join = joinable(predicates1, predicates2, objects1, objects2)
+
+            if object1 == object2 or join:
+                id_object = id_object + 1
+                id_subject = 0
+                triple_patterns = []
+                tp_per_template_count = 0
+
+                predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1)
+                predicates2, subjects2 = get_triplets_of_object(yarrrml2, object2)
+
+                for i in range(len(predicates1)):
+                    if predicates1[i] in predicates2:
+                        source = 'M1 M2'
+                    else:
+                        source = 'M1'
+                        tp_M1_count += 1
+
+                    # test if the triplet pattern isn't already in the list
+                    already_in = False
+                    k = 0
+                    while k < len(triple_patterns) and not already_in:
+                        if predicates1[i] == triple_patterns[k]['predicate']:
+                            if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':
+                                if object1 == triple_patterns[k]['object']:
+                                    already_in = True
+                            else:
+                                already_in = True
+                        k += 1
+
+                    if not already_in:
+                        tp_per_template_count += 1
+                        id_subject = id_subject + 1
+
+                        if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
+                            triple_patterns.append(
+                                {'subject':    '?s' + str(id_subject),
+                                 'predicate':  'rdf:type',
+                                 'object':     object1,
+                                 'source':     source})
+                        else:
+                            triple_patterns.append(
+                                {'subject':    '?s' + str(id_subject),
+                                 'predicate':   str(predicates1[i]),
+                                 'object':     '?o' + str(id_object),
+                                 'source':     source})
+
+                for i in range(len(predicates2)):
+                    if predicates2[i] not in predicates1:
+                        source = 'M2'
+                        tp_M2_count += 1
+
+                        tp_per_template_count += 1
+                        id_subject = id_subject + 1
+
+                        if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
+                            triple_patterns.append(
+                                {'subject':    '?s' + str(id_subject),
+                                 'predicate':  'rdf:type',
+                                 'object':     object2,
+                                 'source':     source})
+                        else:
+                            triple_patterns.append(
+                                {'subject':    '?s' + str(id_subject),
+                                 'predicate':   str(predicates2[i]),
+                                 'object':     '?o' + str(id_object),
+                                 'source':     source})
+
+                list_tp_per_template_count.append(tp_per_template_count)
+                bgp.append(triple_patterns)
+
+    return {'triple_patterns': bgp,
+            'Number_of_triple_patterns': list_tp_per_template_count,
+            'Number_of_triple_patterns_from_M1': tp_M1_count,
+            'Number_of_triple_patterns_from_M2': tp_M2_count}
+
+
+# return the triple patterns created with Subject-Object joins
+# reversed act as the mappings are inverted, changing the 'source' variable, thus allowing to do Object-Subject joins
+def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
+
+    bgp = []
+    list_tp_per_template_count = []
+    tp_M1_count = 0
+    tp_M2_count = 0
+
     id_template = 0
-    # keep track of the number of generic template used in order to name them differently
-    id_filler = 0
-    # and count the total size of each bgp
-    data = []
 
-    join_subject_object = []
+    for subject in get_subjects(yarrrml1):
+        for object in get_objects(yarrrml2):
 
-    objects1, properties_list1 = get_objects(yarrrml1)
-    objects2, properties_list2 = get_objects(yarrrml2)
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object)
 
-    # pour les objets du mapping 1 communs aux sujets du mapping 2
-    for i in range(len(objects1)):
-        for subject2, information2 in (get_templates(yarrrml2)['templates']).items():
-            if objects1[i] == subject2:
+            join = False
+            if predicates1 and predicates2:
+                join = joinable(predicates1, predicates2, objects1, objects2)
 
-                triple_patterns = []
-                count_pattern = 0
+            if subject == object or join:
                 id_template = id_template + 1
-
-                for propertie1 in properties_list1[i]:
-                    if propertie1 in information2['properties']:
-                        provenance = 'M1 M2'
-                    else:
-                        provenance = 'M1'
-                    id_filler = id_filler + 1
-                    # the propertie a doesn't require < >
-                    if propertie1 == 'a':
-                        triple_patterns.append(
-                            ['?S' + str(id_filler) + ' ' + propertie1 + ' ' + '?T' + str(id_template), provenance])
-                    else:
-                        triple_patterns.append(
-                            ['?F' + str(id_filler) + ' <' + propertie1 + '> ' + '?T' + str(id_template), provenance])
-                    count_pattern = count_pattern + 1
-
-                for propertie2 in information2['properties']:
-                    if propertie2 in properties_list1[i]:
-                        provenance = 'M1 M2'
-                    else:
-                        provenance = 'M2'
-                    id_filler = id_filler + 1
-                    # the propertie a doesn't require < >
-                    if propertie2 == 'a':
-                        triple_patterns.append(['?T' + str(id_template) + ' ' + propertie2 + ' ' + '?F' + str(id_filler), provenance])
-                    else:
-                        triple_patterns.append(['?T' + str(id_template) + ' <' + propertie2 + '> ' + '?F' + str(id_filler), provenance])
-                    count_pattern = count_pattern + 1
-
-                if triple_patterns:
-
-                    # print('Object-Subject: ', objects1[i], ' == ', information2['references']['$(field1)'])
-
-                    join_subject_object.append(triple_patterns)
-                    data.append(count_pattern)
-
-    # pour les sujets du mapping 1 communs aux objets du mapping 2
-    for subject1, information1 in (get_templates(yarrrml1)['templates']).items():
-        for ite in range(len(objects2)):
-            if subject1 == objects2[ite]:
-
+                id_filler = 0
                 triple_patterns = []
-                count_pattern = 0
-                id_template = id_template + 1
+                tp_per_template_count = 0
 
-                for propertie1 in information1['properties']:
-                    if propertie1 in properties_list2[ite]:
-                        provenance = 'M1 M2'
+                predicates2, objects2 = get_triplets_of_object(yarrrml2, object)
+
+                for i in range(len(predicates1)):
+                    if predicates1[i] in predicates2:
+                        if predicates1[i] == 'a' or predicates1[i] == 'rdf:thing':
+                            if objects1[i] in objects2:
+                                source = 'M1 M2'
+                            else:
+                                if not reversed:
+                                    source = 'M1'
+                                    tp_M1_count += 1
+                                else:
+                                    source = 'M2'
+                                    tp_M2_count += 1
+                        else:
+                            source = 'M1 M2'
                     else:
-                        provenance = 'M1'
+                        if not reversed:
+                            source = 'M1'
+                            tp_M1_count += 1
+                        else:
+                            source = 'M2'
+                            tp_M2_count += 1
+
+                    tp_per_template_count += 1
+
+                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
+                        triple_patterns.append(
+                            {'subject':    '?t' + str(id_template),
+                             'predicate':  'rdf:type',
+                             'object':     objects1[i],
+                             'source':     source})
+                    else:
+                        id_filler = id_filler + 1
+                        triple_patterns.append(
+                            {'subject':    '?t' + str(id_template),
+                             'predicate':   str(predicates1[i]),
+                             'object':     '?f' + str(id_filler),
+                             'source':     source})
+
+                for i in range(len(predicates2)):
+                    if predicates2[i] in predicates1:
+                        source = 'M1 M2'
+                    else:
+                        if not reversed:
+                            source = 'M2'
+                            tp_M2_count += 1
+                        else:
+                            source = 'M1'
+                            tp_M1_count += 1
+
+                    tp_per_template_count += 1
                     id_filler = id_filler + 1
-                    # the propertie a doesn't require < >
-                    if propertie1 == 'a':
-                        triple_patterns.append(['?T' + str(id_template) + ' ' + propertie1 + ' ' + '?F' + str(id_filler), provenance])
-                    else:
-                        triple_patterns.append(['?T' + str(id_template) + ' <' + propertie1 + '> ' + '?F' + str(id_filler), provenance])
-                    count_pattern = count_pattern + 1
 
-                for propertie2 in properties_list2[ite]:
-                    if propertie2 in information1['properties']:
-                        provenance = 'M1 M2'
-                    else:
-                        provenance = 'M2'
-                    id_filler = id_filler + 1
-                    # the propertie a doesn't require < >
-                    if propertie2 == 'a':
-                        triple_patterns.append(['?F' + str(id_filler) + ' ' + propertie2 + ' ' + '?T' + str(id_template), provenance])
-                    else:
-                        triple_patterns.append(['?F' + str(id_filler) + ' <' + propertie2 + '> ' + '?T' + str(id_template), provenance])
-                    count_pattern = count_pattern + 1
+                    triple_patterns.append(
+                        {'subject':    '?f' + str(id_filler),
+                         'predicate':   str(predicates2[i]),
+                         'object':     '?t' + str(id_template),
+                         'source':     source})
 
-                if triple_patterns:
+                list_tp_per_template_count.append(tp_per_template_count)
+                bgp.append(triple_patterns)
 
-                    # print('Subject-Object: ', information1['references']['$(field1)'], '==', objects2[i])
-
-                    join_subject_object.append(triple_patterns)
-                    data.append(count_pattern)
-
-    return [id_template, data], {'subject-object': join_subject_object}
-
-# calculate the score from data colected before hand
-# the data is of this form:
-#
-#    [ [ [int,int,int], ...],[ [int,int,int], ...],[ [int,int,int], ...] ]
-#    for each type of join (s-s, o-o, s-o in that order)
-#       for each bgp (each triplet is a bgp
-#           first is the number of triple pattern coming from mapping1
-#           second is the number of triple pattern coming from mapping2
-#           third is the number of triple pattern coming from mapping1 and mapping2
-def calcul_score(data):
-    score = 0
-
-    for join in data:
-        for triple_pattern in join:
-            score = score -1 + 2 ** triple_pattern[1]
-
-    return score
+    return {'triple_patterns': bgp,
+            'Number_of_triple_patterns': list_tp_per_template_count,
+            'Number_of_triple_patterns_from_M1': tp_M1_count,
+            'Number_of_triple_patterns_from_M2': tp_M2_count}
 
 
+def compare_mappings(yarrrml1, yarrrml2):
+    return {'subject-subject': S2S_joinDetection(yarrrml1, yarrrml2),
+            'object-object':   O2O_joinDetection(yarrrml1, yarrrml2),
+            'subject-object':  S2O_joinDetection(yarrrml1, yarrrml2),
+            'object-subject':  S2O_joinDetection(yarrrml2, yarrrml1, reversed=True)}
+
+
+def compare(mapping1, mapping2):
+
+    yarrrml1 = load(open(mapping1), Loader=Loader)
+    yarrrml2 = load(open(mapping2), Loader=Loader)
+
+    return compare_mappings(yarrrml1, yarrrml2)
+
+
+#sortie adaptée à l'appli web
 def get_results(yarrrml_mappings, mapping_names):
-    result = {'data': [], 'queries': []}
 
-    # compare every mapping with every other mappings and print data and results
+    results = {
+        'data': [],
+        'queries': []
+    }
+
     for it1 in range(0, len(yarrrml_mappings)):
         for it2 in range(0, len(yarrrml_mappings)):
             if it1 != it2:
-                data_1, results_1 = get_join_subject_subject(yarrrml_mappings[it1], yarrrml_mappings[it2])
-                data_2, results_2 = get_join_object_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
-                data_3, results_3 = get_join_subject_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
 
-                # calculate the score in order to rank later
-                # we calculate how much M2 adds to M1
-                score_data = []
+                compared = compare_mappings(yarrrml_mappings[it1], yarrrml_mappings[it2])
 
-                # calculate the number of triplet coming from M1 and the number of triplet coming from M2
-                provenance1_M1 = 0
-                provenance1_M2 = 0
-                score_data.append([])
-                for provs in results_1['subject-subject']:
-                    for prov in provs:
-                        count1 = 0
-                        count2 = 0
-                        count3 = 0
-                        if len(prov[1]) > 2:
-                            provenance1_M1 = provenance1_M1 + 1
-                            provenance1_M2 = provenance1_M2 + 1
-                            count3 = count3 + 1
-                        else:
-                            if prov[1][1] == '1':
-                                provenance1_M1 = provenance1_M1 + 1
-                                count1 = count1 + 1
-                            else:
-                                provenance1_M2 = provenance1_M2 + 1
-                                count2 = count2 + 1
-                        score_data[0].append([count1, count2, count3])
+                results['data'].append({
+                    'Source': mapping_names[it1],
+                    'Destination': mapping_names[it2],
+                    'Score': 0,
+                    'Join_subject_subject': {
+                        'Number_of_triple_pattern': compared['subject-subject']['Number_of_triple_patterns'],
+                        'Number_of_triple_pattern_from_M1': compared['subject-subject']['Number_of_triple_patterns_from_M1'],
+                        'Number_of_triple_pattern_from_M2': compared['subject-subject']['Number_of_triple_patterns_from_M2']
+                    },
+                    'Join_object_object': {
+                        'Number_of_triple_pattern': compared['object-object']['Number_of_triple_patterns'],
+                        'Number_of_triple_pattern_from_M1': compared['object-object']['Number_of_triple_patterns_from_M1'],
+                        'Number_of_triple_pattern_from_M2': compared['object-object']['Number_of_triple_patterns_from_M2']
+                    },
+                    'Join_subject_object': {
+                        'Number_of_triple_pattern': compared['subject-object']['Number_of_triple_patterns'],
+                        'Number_of_triple_pattern_from_M1': compared['subject-object']['Number_of_triple_patterns_from_M1'],
+                        'Number_of_triple_pattern_from_M2': compared['subject-object']['Number_of_triple_patterns_from_M2']
+                    }
+                })
 
-                provenance2_M1 = 0
-                provenance2_M2 = 0
-                score_data.append([])
-                for provs in results_2['object-object']:
-                    for prov in provs:
-                        count1 = 0
-                        count2 = 0
-                        count3 = 0
-                        if len(prov[1]) > 2:
-                            provenance2_M1 = provenance2_M1 + 1
-                            provenance2_M2 = provenance2_M2 + 1
-                        else:
-                            if prov[1][1] == '1':
-                                provenance2_M1 = provenance2_M1 + 1
-                            else:
-                                provenance2_M2 = provenance2_M2 + 1
-                                count2 = count2 + 1
-                        score_data[1].append([count1, count2, count3])
+                for i in range(len(compared['subject-subject']['triple_patterns'])):
+                    query = '###subject-subject\n'
+                    query += f'#M1: {mapping_names[it1]}\n'
+                    query += f'#M2: {mapping_names[it2]}\n'
+                    query += 'SELECT *\nWHERE {\n'
 
-                provenance3_M1 = 0
-                provenance3_M2 = 0
-                score_data.append([])
-                for provs in results_3['subject-object']:
-                    for prov in provs:
-                        count1 = 0
-                        count2 = 0
-                        count3 = 0
-                        if len(prov[1]) > 2:
-                            provenance3_M1 = provenance3_M1 + 1
-                            provenance3_M2 = provenance3_M2 + 1
-                            count3 = count3 + 1
-                        else:
-                            if prov[1][1] == '1':
-                                provenance3_M1 = provenance3_M1 + 1
-                                count1 = count1 + 1
-                            else:
-                                provenance3_M2 = provenance3_M2 + 1
-                                count2 = count2 + 1
-                        score_data[2].append([count1, count2, count3])
+                    for pattern in compared['subject-subject']['triple_patterns'][i]:
+                        query += triple_pattern_to_sparql(pattern) + '\n'
 
-                score = calcul_score(score_data)
+                    query += '}'
+                    results['queries'].append(query)
 
-                # only for the first loop
-                comparison = {"Source": mapping_names[it1],
-                              "Destination": mapping_names[it2],
-                              "Score": score,
-                              "Join_subject_subject":{
-                                  "Number_of_triple_pattern": [],
-                                  "Number_of_triple_pattern_from_M1": None,
-                                  "Number_of_triple_pattern_from_M2": None},
-                              "Join_object_object":{
-                                  "Number_of_triple_pattern": [],
-                                  "Number_of_triple_pattern_from_M1": None,
-                                  "Number_of_triple_pattern_from_M2": None},
-                              "Join_subject_object":{
-                                  "Number_of_triple_pattern": [],
-                                  "Number_of_triple_pattern_from_M1": None,
-                                  "Number_of_triple_pattern_from_M2": None}
-                              }
+                for i in range(len(compared['object-object']['triple_patterns'])):
+                    query = '###object-object\n'
+                    query += f'#M1: {mapping_names[it1]}\n'
+                    query += f'#M2: {mapping_names[it2]}\n'
+                    query += 'SELECT *\nWHERE {\n'
 
-                if data_1[0] > 0:
-                    for i in range(len(data_1[1])):
-                        comparison["Join_subject_subject"]["Number_of_triple_pattern"].append(data_1[1][i])
-                comparison["Join_subject_subject"]["Number_of_triple_pattern_from_M1"] = provenance1_M1
-                comparison["Join_subject_subject"]["Number_of_triple_pattern_from_M2"] = provenance1_M2
+                    for pattern in compared['object-object']['triple_patterns'][i]:
+                        query += triple_pattern_to_sparql(pattern) + '\n'
 
-                # result from object_object
-                if data_2[0] > 0:
-                    for i in range(len(data_2[1])):
-                        comparison["Join_object_object"]["Number_of_triple_pattern"].append(data_2[1][i])
-                comparison["Join_object_object"]["Number_of_triple_pattern_from_M1"] = provenance2_M1
-                comparison["Join_object_object"]["Number_of_triple_pattern_from_M2"] = provenance2_M2
+                    query += '}'
+                    results['queries'].append(query)
 
-                # result from subject_object
-                if data_3[0] > 0:
-                    for i in range(len(data_3[1])):
-                        comparison["Join_subject_object"]["Number_of_triple_pattern"].append(data_3[1][i])
-                comparison["Join_subject_object"]["Number_of_triple_pattern_from_M1"] = provenance3_M1
-                comparison["Join_subject_object"]["Number_of_triple_pattern_from_M2"] = provenance3_M2
+                for i in range(len(compared['subject-object']['triple_patterns'])):
+                    query = '###subject-object\n'
+                    query += f'#M1: {mapping_names[it1]}\n'
+                    query += f'#M2: {mapping_names[it2]}\n'
+                    query += 'SELECT *\nWHERE {\n'
 
-                result['data'].append(comparison)
+                    for pattern in compared['subject-object']['triple_patterns'][i]:
+                        query += triple_pattern_to_sparql(pattern) + '\n'
 
-                for i in range(len(results_1['subject-subject'])):
-                    query = 'SELECT *\nWHERE {\n'
-                    for y in results_1['subject-subject'][i]:
-                        if y[1] == "M1 M2":
-                            query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
-                        if y[1] == "M1":
-                            query += f' {y[0]}   # {mapping_names[it1]}'
-                        if y[1] == "M2":
-                            query += f' {y[0]}   # {mapping_names[it2]}'
-                    query += '\n}'
-                    result['queries'].append(query)
+                    query += '}'
+                    results['queries'].append(query)
 
-                for i in range(len(results_2['object-object'])):
-                    query = 'SELECT *\nWHERE {\n'
-                    for y in results_2['object-object'][i]:
-                        if y[1] == "M1 M2":
-                            query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
-                        if y[1] == "M1":
-                            query += f' {y[0]}   # {mapping_names[it1]}'
-                        if y[1] == "M2":
-                            query += f' {y[0]}   # {mapping_names[it2]}'
-                    query += '\n}'
-                    result['queries'].append(query)
+    return results
 
-                for i in range(len(results_3['subject-object'])):
-                    query = 'SELECT *\nWHERE {\n'
-                    for y in results_3['subject-object'][i]:
-                        if y[1] == "M1 M2":
-                            query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
-                        if y[1] == "M1":
-                            query += f' {y[0]}   # {mapping_names[it1]}'
-                        if y[1] == "M2":
-                            query += f' {y[0]}   # {mapping_names[it2]}'
-                    query += '\n}'
-                    result['queries'].append(query)
-    return result
+
+def triple_pattern_to_sparql(pattern):
+    if pattern['predicate'] == 'a':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    elif pattern['predicate'] == 'rdf:type':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    else:
+        return pattern['subject'] + ' <' + pattern['predicate'] + '> ' + pattern['object'] + '.\t#' + pattern['source']
